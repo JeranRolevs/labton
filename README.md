@@ -1,4 +1,15 @@
-# Labton — configurable discovery labs
+# Labton <> configurable probablistic discovery labs
+
+De-siloing can create groupthink, while silos can prevent knowledge sharing and reduce
+research efficiency.
+
+Labton tackles the problem of research and lab design when probabilistic research
+based on LLMs and decision models is used.
+
+Choose a lab design, configure its communication rules, or connect multiple labs with
+different organizational structures and different levels of information sharing.
+Labton lets you experiment with how research is organized, how agents communicate,
+and how knowledge moves through a discovery process.
 
 Labton runs bounded research workflows with a user-selected organization, models,
 communication rules and budgets. Choose one scientist or several complementary agents,
@@ -56,6 +67,16 @@ cd ../my-labs
 python3 lab.py prepare --multi-lab
 python3 lab.py visualize --multi-lab
 ```
+
+To add more labs, extend `multi_lab.labs` in `study.yaml` with a unique `id` and a
+configured `variant` for each lab (2–32 labs). Reuse a variant for the same design,
+or select another variant for a different design.
+
+Choose `multi_lab.communication.profile`: `none`, `low`, `intermediate`, `high` or
+`wisdom_only`. The `wisdom` setting adds conditional lessons to a detail profile;
+use `none` with `wisdom: false` for complete isolation. This inter-lab policy applies
+to the whole collection. Each variant separately controls communication among its
+own agents.
 
 ## Watch the process
 
