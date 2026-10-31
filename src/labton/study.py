@@ -144,7 +144,7 @@ def api_key(workspace, provider):
     raise StudyError("Set " + name + " in the workspace .env or process environment; never put credentials in study.yaml.")
 
 
-def plans(project, config, *, variant_id=None, persistence=None, sequences=None, effort_mode=None, sequence_context=None):
+def plans(project, config, *, workspace=None, variant_id=None, persistence=None, sequences=None, effort_mode=None, sequence_context=None):
     result = {}
     for variant in config["variants"]:
         overrides = merge(config["base_overrides"], variant["overrides"])
@@ -155,6 +155,12 @@ def plans(project, config, *, variant_id=None, persistence=None, sequences=None,
                                 "sequence_context": sequence_context} if variant["id"] == variant_id else {}))
         generation = generation_settings(config["provider"])
         bindings = {"generation": generation}
+        if plan["statistics"].get("prior_records"):
+            from .priors import runtime_priors
+            records = runtime_priors(workspace or project, config, plan["statistics"])
+            bindings["prior_approvals"] = {target: record["record_sha256"] for target, record in records.items()}
+            plan["statistics"].update(status="reviewed_prior_protocol_bound", prior_adoption="explicit_user_review",
+                                      sensitivity="declared_alternatives_on_each_measured_primary_result")
         plan["generation_provider"] = generation
         if plan["decision_service"]["mode"] != "llm_only":
             settings = resolve_specialist(config, plan["decision_service"]["specialist"])
@@ -183,7 +189,7 @@ def client_for(config, key, **kwargs):
 
 def prepare(project, workspace):
     config = load_study(workspace)
-    resolved = plans(project, config)
+    resolved = plans(project, config, workspace=workspace)
     for name, plan in resolved.items():
         save(workspace / "plans" / (name + ".json"), plan)
     return {"status": "prepared", "variants": list(resolved), "model": config["provider"]["model"],
@@ -192,7 +198,7 @@ def prepare(project, workspace):
 
 async def doctor(project, workspace, *, live=False, variant=None):
     config = load_study(workspace)
-    resolved = plans(project, config)
+    resolved = plans(project, config, workspace=workspace)
     if variant is not None:
         if variant not in resolved:
             raise StudyError("Unknown doctor variant; inspect study prepare.")
@@ -819,7 +825,7 @@ initial tool, so do not claim those capabilities solved.
 
 async def run_variant(project, workspace, variant, *, persistence=None, sequences=None, effort_mode=None, sequence_context=None):
     config = load_study(workspace)
-    resolved = plans(project, config, variant_id=variant, persistence=persistence, sequences=sequences,
+    resolved = plans(project, config, workspace=workspace, variant_id=variant, persistence=persistence, sequences=sequences,
                      effort_mode=effort_mode, sequence_context=sequence_context)
     if variant not in resolved:
         raise StudyError("Unknown variant; inspect study prepare.")
@@ -918,7 +924,7 @@ def command(project, workspace, operation, *, live=False, variant=None, persiste
         if variant is not None or persistence is not None or effort_mode is not None:
             raise StudyError("Multi-lab selects per-lab variants and effort settings from study.yaml.")
         if operation == "prepare":
-            plan = compile_multi_lab(project, load_study(workspace), sequences=sequences, sequence_context=sequence_context)
+            plan = compile_multi_lab(project, load_study(workspace), workspace=workspace, sequences=sequences, sequence_context=sequence_context)
             save(workspace / "plans/multi-lab.json", plan)
             return {"status": "prepared", "variant": "multi-lab", "labs": [lab["id"] for lab in plan["multi_lab"]["labs"]],
                     "sequences": plan["execution"]["sequences"], "meeting": plan["execution"]["meeting"], "api_calls": 0,

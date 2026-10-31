@@ -116,6 +116,8 @@ def load_config(project: Path, relative: str = "configs/lab.yaml") -> dict:
 def validate_config(config: dict) -> dict:
     """Validate resolved settings, including external study overrides."""
     validate(config, "lab_config.schema.json")
+    if config["statistics"]["approach"] != "bayesian" and config["statistics"].get("prior_records"):
+        raise ConfigurationError("Prior records require Bayesian analysis; no silent statistical approach switch.")
     if config["budget"]["confirmation_evaluations_reserved"] > config["budget"]["max_evaluations"]:
         raise ConfigurationError("confirmation reserve must fit within the total evaluation budget")
     if config["decisions"]["mode"] != "llm_only" and not config["decisions"]["specialist"]:

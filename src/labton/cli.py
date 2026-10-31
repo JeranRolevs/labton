@@ -53,6 +53,26 @@ def main(argv: list[str] | None = None) -> int:
     init.add_argument("--template", choices=("text", "memory", "scientist", "multi-lab"), default="text")
     init.add_argument("--decision-backend", choices=("llm_only", "chat_completions", "typed"), help="Choose a decision protocol without making API calls")
     commands.add_parser("designs", help="List validated Markdown designs")
+    priors = commands.add_parser("priors", help="Check, propose and explicitly review Bayesian priors")
+    prior_ops = priors.add_subparsers(dest="prior_operation", required=True)
+    for operation in ("check", "suggest", "approve"):
+        command = prior_ops.add_parser(operation)
+        command.add_argument("--workspace", type=Path, required=True)
+        command.add_argument("--protocol", required=True, help="Workspace-relative prior elicitation protocol")
+        if operation != "check":
+            command.add_argument("--output", required=True, help="New local record under setup/priors/")
+        if operation == "suggest":
+            command.add_argument("--variant", required=True)
+            command.add_argument("--provider", required=True, help="A named decision_providers entry")
+            command.add_argument("--live", action="store_true", help="Authorize one metered decision request")
+            command.add_argument("--max-wall-seconds", type=float, default=30)
+        if operation == "approve":
+            command.add_argument("--candidate", required=True)
+            command.add_argument("--reviewer", required=True)
+            command.add_argument("--rationale", required=True)
+            command.add_argument("--evidence-reviewed", action="store_true",
+                                 help="Attest to reviewing evidence relevance and independence from likelihood data")
+            command.add_argument("--proposal", help="Optional workspace-relative model proposal being reviewed")
     visualization_options(commands.add_parser("visualize", help="View a lab process using two local, read-only visualization agents"))
     for name, help_text in (("plan", "Compile an inspectable JSON plan"), ("check", "Check configuration and all preset contracts")):
         sub = commands.add_parser(name, help=help_text)
@@ -87,6 +107,9 @@ def main(argv: list[str] | None = None) -> int:
     try:
         if args.command == "init":
             result = init_workspace(args.destination, args.template, args.decision_backend)
+        elif args.command == "priors":
+            from .priors import command as prior_command
+            result = prior_command(args)
         elif args.command == "visualize" or (args.command == "study" and args.operation == "visualize"):
             result = visualize(args.project, workspace=args.workspace, variant=args.variant, trial=args.trial,
                                multi_lab=args.multi_lab,

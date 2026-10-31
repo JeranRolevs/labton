@@ -1,4 +1,19 @@
-# Labton 0.3.0 release notes
+# Labton 0.4.0 release notes
+
+Bayesian binomial analyses can optionally use a decision model to recommend from explicit
+Beta prior candidates. Prior-only evidence goes to the model; independent validation and
+likelihood outcomes stay outside its context. Local checks cover known evidence overlap,
+prior predictive implications and independent validation counts. Explicit user review is
+required before adoption, and review hashes bind the protocol, evidence and model proposal.
+
+The memory adapter reports exact posterior sensitivity across declared alternatives for
+approved primary run-rate targets. Priors remain fixed across research sequences; protected
+confirmation remains separate. Unsupported adapters reject this option. Existing manual priors
+and frequentist configurations remain compatible. Install the optional `bayesian` extra for
+local diagnostics; `memory` already supplies its numeric dependencies. No setup or planning
+requests are introduced. See [the workflow and limitations](BAYESIAN_PRIORS.md).
+
+## 0.3.0 multi-lab layer
 
 An optional multi-lab layer composes the same or different study variants into
 separate labs. The user chooses inter-lab communication (none, low, intermediate,

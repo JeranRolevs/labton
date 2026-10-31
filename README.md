@@ -32,7 +32,7 @@ Setup and planning make no provider calls. Starters contain placeholder URLs and
 choose your service and credentials explicitly in study.yaml before a live run.
 [Getting started](docs/GETTING_STARTED.md) and [provider configuration](docs/PROVIDERS.md)
 explain the generation and optional decision protocols. No service account is bundled or preferred.
-See [0.3.0 release notes](docs/RELEASE.md) when updating an existing workspace.
+See [0.4.0 release notes](docs/RELEASE.md) when updating an existing workspace.
 
 ## Choose the lab
 
@@ -104,6 +104,12 @@ configured endpoint, with LLM-only, shadow and selected-active modes. Other API 
 an adapter; changing a URL alone does not translate a protocol. [Decision configuration](docs/DECISION_PROVIDERS.md).
 
 ## Scope and evidence
+
+Bayesian binomial analyses can use [model-assisted prior elicitation](docs/BAYESIAN_PRIORS.md):
+explicit candidate distributions, an evidence ledger that checks known overlap with likelihood
+data, independent predictive checks, user review before adoption, and posterior sensitivity
+across alternatives. A decision model's suggestion is a proposal; its confidence never sets
+prior strength. This executable option currently supports the memory adapter's primary run rates.
 
 The runner implements dependency-wave scheduling, bounded child agents, filtered Markdown
 sharing, provider accounting and registered domain tools. General asset integration, durable

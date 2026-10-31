@@ -439,13 +439,13 @@ def visualize(project, *, workspace=None, variant=None, trial=None, output=None,
             raise ConfigurationError("Multi-lab visualization needs a workspace and per-lab settings in study.yaml.")
         from .study import load_study
         from .multi_lab import compile_multi_lab
-        plan = compile_multi_lab(project, load_study(workspace), sequences=sequences, sequence_context=sequence_context)
+        plan = compile_multi_lab(project, load_study(workspace), workspace=workspace, sequences=sequences, sequence_context=sequence_context)
         variant = "multi-lab"
     elif variant:
         if workspace is None:
             raise ConfigurationError("--variant requires --workspace.")
         from .study import load_study, plans
-        resolved = plans(project, load_study(workspace), variant_id=variant, persistence=persistence,
+        resolved = plans(project, load_study(workspace), workspace=workspace, variant_id=variant, persistence=persistence,
                          sequences=sequences, effort_mode=effort_mode, sequence_context=sequence_context)
         if variant not in resolved:
             raise ConfigurationError("Unknown visualization variant.")

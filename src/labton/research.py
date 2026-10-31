@@ -211,6 +211,8 @@ def create_backend(workspace,config_path,trial_root,plan):
     if config.get("adapter_kind")=="memory_policy.v1":
         from .memory import MemoryResearchBackend
         return MemoryResearchBackend(workspace,config_path,trial_root,plan)
+    if plan["statistics"].get("prior_records"):
+        raise ResearchError("This adapter does not implement reviewed priors; refusing to ignore the selected protocol.")
     return ResearchBackend(workspace,config_path,trial_root,plan)
 
 

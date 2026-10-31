@@ -33,7 +33,7 @@ def research_calls(plan):
                and node["research_activity"] != "operational_only")
 
 
-def compile_multi_lab(project, config, *, sequences=None, sequence_context=None):
+def compile_multi_lab(project, config, *, workspace=None, sequences=None, sequence_context=None):
     if "multi_lab" not in config:
         raise StudyError("Add multi_lab settings to study.yaml, or initialize the multi-lab template.")
     settings = deepcopy(config["multi_lab"])
@@ -44,7 +44,7 @@ def compile_multi_lab(project, config, *, sequences=None, sequence_context=None)
     validate(settings, "multi_lab.schema.json")
     # There is no natural inter-lab preset: the user supplies this policy explicitly.
     sharing = resolve_sharing({"communication": {**settings["communication"], "cadence": "sequence_boundary"}}, {})
-    resolved = plans(project, config)
+    resolved = plans(project, config, workspace=workspace)
     labs, ids = [], set()
     for entry in settings["labs"]:
         if entry["id"] in ids or entry["variant"] not in resolved:
@@ -441,7 +441,7 @@ class MultiLabStudy:
 
 async def run_multi_lab(project, workspace, *, sequences=None, sequence_context=None):
     config = load_study(workspace)
-    plan = compile_multi_lab(project, config, sequences=sequences, sequence_context=sequence_context)
+    plan = compile_multi_lab(project, config, workspace=workspace, sequences=sequences, sequence_context=sequence_context)
     problem = (workspace / config["problem_file"]).read_text()
     if not problem.strip() or "AWAITING_USER_PROBLEM" in problem:
         raise StudyError("Research problem not supplied. No research or model calls started.")

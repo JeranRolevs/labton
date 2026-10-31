@@ -45,6 +45,7 @@ decisions:
   max_calls_per_episode: 4
 statistics:
   approach: frequentist
+  prior_records: {}
 domain:
   adapter: unconfigured
   mission_file: null

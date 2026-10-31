@@ -337,6 +337,11 @@
     "statistics": {
       "type": "object",
       "properties": {
+        "prior_records": {
+          "type": "object",
+          "propertyNames": {"pattern": "^[a-z][a-z0-9_]*$"},
+          "additionalProperties": {"type": "string", "minLength": 1}
+        },
         "approach": {
           "enum": [
             "frequentist",

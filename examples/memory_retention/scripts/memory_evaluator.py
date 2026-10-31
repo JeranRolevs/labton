@@ -50,7 +50,9 @@ def main():
     started=time.monotonic()
     operation=request["operation"]
     prior=None
-    if request.get("statistical_approach")=="bayesian":
+    # Reviewed priors are applied by Labton to the measured counts, with a sensitivity report.
+    # The legacy, explicitly configured manual prior remains a separate mode.
+    if request.get("statistical_approach")=="bayesian" and not request.get("reviewed_prior_analysis"):
         prior=protocol.get("bayesian_prior")
         if not isinstance(prior,list) or len(prior)!=2 or not all(isinstance(v,(int,float)) and not isinstance(v,bool) and math.isfinite(v) and v>0 for v in prior):
             raise ValueError("Bayesian mode requires an explicit positive [a,b] prior.")

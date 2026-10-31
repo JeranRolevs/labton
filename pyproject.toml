@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "labton"
-version = "0.3.0"
+version = "0.4.0"
 description = "Configurable multi-agent discovery labs with optional decision specialists"
 authors = [{name = "Goran Mitevski"}]
 readme = "README.md"
@@ -24,6 +24,7 @@ Issues = "https://github.com/JeranRolevs/labton/issues"
 License = "https://github.com/JeranRolevs/labton/blob/main/LICENSE"
 
 [project.optional-dependencies]
+bayesian = ["scipy>=1.10"]
 memory = ["numpy>=1.24", "scipy>=1.10", "psutil>=5.9"]
 diagrams = ["matplotlib>=3.6", "Pillow>=9"]
 

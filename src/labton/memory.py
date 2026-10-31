@@ -58,11 +58,16 @@ def config_for(workspace,path):
 
 
 def execute(workspace,job,config,operation,candidate=None,split="development",approach="frequentist",author=None):
+    reviewed = config.get("_reviewed_priors", {})
+    if reviewed:
+        from .priors import verify_frozen_files
+        verify_frozen_files(workspace, reviewed)
     job.mkdir(parents=True,exist_ok=False)
     script=project_file(workspace,config["supervisor_script"])
     payload={"receipt_id":"experiment:"+job.name,"operation":operation,"candidate":candidate,"split":split,
              "protocol":config["protocol"],"private_seed_file":str(project_file(workspace,config["private_seed_file"])),
-             "statistical_approach":approach,"source_authorship":author}
+             "statistical_approach":approach,"source_authorship":author,
+             "reviewed_prior_analysis": bool(reviewed)}
     (job/"request.json").write_text(json.dumps(payload,indent=2,allow_nan=False)+"\n")
     env={"PATH":os.environ.get("PATH","/usr/bin:/bin"),"LANG":"en_US.UTF-8","PYTHONDONTWRITEBYTECODE":"1",
          "OPENBLAS_NUM_THREADS":"1","OMP_NUM_THREADS":"1","MKL_NUM_THREADS":"1",
@@ -83,6 +88,13 @@ def execute(workspace,job,config,operation,candidate=None,split="development",ap
                 "returncode":process.returncode,"source_ref":str(job/"stderr.log")}
     result=json.loads(path.read_text());json.dumps(result,allow_nan=False)
     if result.get("receipt_id")!=payload["receipt_id"]: raise ResearchError("Memory receipt mismatch.")
+    if reviewed:
+        from .priors import apply_priors
+        verify_frozen_files(workspace, reviewed)
+        result = apply_priors(result, reviewed)
+    elif approach == "bayesian":
+        result["prior_analysis"] = {"mode": "manual_beta", "review_status": "not_checked_by_prior_workflow",
+                                    "sensitivity_status": "not_run"}
     result.update(source_ref=str(path),source_authorship=author,supervisor_wall_seconds=time.monotonic()-started)
     path.write_text(json.dumps(result,indent=2,allow_nan=False)+"\n")
     return result
@@ -92,6 +104,13 @@ class MemoryResearchBackend:
     action_contract=ACTION_CONTRACT
     def __init__(self,workspace,config_path,trial_root,plan):
         self.workspace=workspace;self.plan=plan;self.config=config_for(workspace,config_path)
+        if plan["statistics"].get("prior_records"):
+            from .priors import runtime_priors, PriorError
+            reviewed = runtime_priors(workspace, {"runtime": {"mode": "research", "domain_config": config_path}}, plan["statistics"])
+            bound = plan["configuration_snapshot"].get("providers", {}).get("prior_approvals")
+            if bound != {target: record["record_sha256"] for target, record in reviewed.items()}:
+                raise PriorError("The approved priors differ from the plan snapshot; prepare a new plan.")
+            self.config["_reviewed_priors"] = reviewed
         current=workspace/QUALIFICATION
         if not current.is_file(): raise ResearchError("Qualify the memory task before research runs.")
         qualified=json.loads(current.read_text())
@@ -108,7 +127,7 @@ class MemoryResearchBackend:
     @staticmethod
     def visible_result(result):
         keep=("status","receipt_id","reason","returncode","source_ref","candidate","metrics","results",
-              "counts","memory_budget_bytes","limits","source_authorship")
+              "counts","memory_budget_bytes","limits","source_authorship","prior_analysis")
         return {k:v for k,v in result.items() if k in keep}
 
     async def evaluate(self,actor,team,candidate):

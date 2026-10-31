@@ -25,6 +25,13 @@ records the selected approach in its configuration fingerprint. The user can cha
 an acceptance gate. As with other settings, future runtime changes record their effective
 boundary; previous analyses retain the method and inputs actually used.
 
+For Bayesian binomial analyses, [reviewed model-assisted priors](docs/BAYESIAN_PRIORS.md)
+are optional. A user-selected decision model recommends from explicit candidate distributions;
+independent evidence checks and an explicit user review precede adoption. The executable memory
+adapter reports sensitivity to alternative priors and prevents known overlap of prior/check
+evidence with the likelihood. Model confidence never supplies statistical probabilities or
+prior strength. See the guide for scope and the limits of provenance checks.
+
 ## Domain-specific protocol
 
 Selecting a family does not select a universal test or model. Before analyzing relevant data,
@@ -65,7 +72,9 @@ posterior probabilities, and intervals come from the identified evaluator/analys
 not from an LLM's asserted confidence or a decision-model judgment. Future runtime validation checks
 method compatibility, actual artifacts, assumptions and diagnostics; schemas only check shape.
 
-The current skeleton resolves and records the policy and defines the evaluator interface.
-It does not execute tests, sample posteriors, select a numeric library, or add dependencies.
+Structural planning resolves and records the policy without statistical computation or model calls.
+Executable analyses belong to the selected domain adapter. The memory adapter supports manual
+Beta/binomial posteriors, or the optional reviewed prior workflow with exact SciPy diagnostics
+and posterior sensitivity; other likelihoods remain the domain adapter's responsibility.
 The two [protocol templates](templates/statistics/README.md) are draft planning artifacts with
 unset methods/parameters. They contain no measured results.
