@@ -1,0 +1,45 @@
+%% Generated from specs.py; 2026-10-31. Current runtime; gray nodes are planned.
+flowchart TB
+    setup["Mission + user-selected Markdown lab<br/>A silos / B integrated / C co-leaders / D hub / E flat / F single<br/>Adjust personas, children, sharing, statistics and budgets"]
+    control["Controller + bounded scheduler<br/>Dependency waves, accounting and confirmation reserve"]
+    admin["User / administration<br/>Outside the research generator"]
+    model["One generation model<br/>User-selected endpoint + model"]
+    a["Prime A + optional children<br/>Distinct approach; bounded depth"]
+    b["Prime B + optional children<br/>Distinct approach; inherited budgets"]
+    n["Prime N + optional children<br/>Own context; configurable count"]
+    decision["Agent-local decision tool<br/>LLM-only / active / shadow<br/>Shared budgets and per-backend usage"]
+    sharing["Barrier + recipient-filtered MD<br/>none / low / intermediate / high<br/>wisdom alone or alongside detail"]
+    execute["Qualified experiment adapter<br/>Trusted evaluator; separate policy sandbox<br/>Counts, intervals, memory and cost"]
+    output["Candidate + evidence package<br/>Source, recipe, limits and failures"]
+    confirm["Reserved confirmation<br/>Fixed candidate; fresh clean calibration<br/>No return to acting agents"]
+    evidence["Saved measured receipts<br/>Source/model/input identity; failures"]
+    future["General integration and asset registry<br/>Planned services; no automatic organizational redesign"]
+    setup --> control
+    admin --> control
+    control --> model
+    control --> a
+    control --> b
+    control --> n
+    a -.-> decision
+    b --> sharing
+    n --> execute
+    a --> sharing
+    b --> execute
+    sharing -->|next phase| b
+    execute --> evidence
+    evidence --> confirm
+    confirm --> output
+    output -.-> future
+    classDef artifact fill:#FCFAF4,stroke:#99876F,color:#342F28;
+    class setup,admin,output artifact;
+    classDef llm fill:#E9EEEE,stroke:#5B7580,color:#342F28;
+    class model,a,b,n llm;
+    classDef code fill:#EDF0E6,stroke:#697957,color:#342F28;
+    class control,execute,confirm code;
+    classDef evidence fill:#F1EADD,stroke:#93805D,color:#342F28;
+    class sharing,evidence evidence;
+    classDef optional fill:#F6EDDC,stroke:#9A7440,color:#342F28;
+    class decision optional;
+    classDef future fill:#EEEDE8,stroke:#999389,color:#342F28;
+    class future future;
+    linkStyle default stroke:#887E6B,stroke-width:1.5px;

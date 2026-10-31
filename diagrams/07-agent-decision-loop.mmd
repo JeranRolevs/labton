@@ -1,0 +1,33 @@
+%% Generated from specs.py; 2026-10-31. Current runtime; gray nodes are planned.
+flowchart LR
+    agent["Prime / child LLM<br/>Own task and caller-visible evidence"]
+    tool["decision.assess<br/>Bounded question + typed spec"]
+    check["Scope and budget checks<br/>No hidden peer context"]
+    router["Configured routing<br/>LLM-only / shadow / active"]
+    same["Same configured LLM<br/>Default or logged fallback"]
+    chat_judge["Configured specialist<br/>Configured chat or typed endpoint"]
+    shadow["Private shadow receipt<br/>Hidden from acting context"]
+    validated["Validate typed answer<br/>Record source and usage"]
+    resume["Same agent resumes<br/>Next permitted action"]
+    agent --> tool
+    tool --> check
+    check --> router
+    router -.-> chat_judge
+    check --> same
+    chat_judge -.->|logged fallback| same
+    chat_judge -.->|shadow only| shadow
+    same --> validated
+    chat_judge -.-> validated
+    validated --> resume
+    resume --> agent
+    classDef artifact fill:#FCFAF4,stroke:#99876F,color:#342F28;
+    classDef llm fill:#E9EEEE,stroke:#5B7580,color:#342F28;
+    class agent,same,resume llm;
+    classDef code fill:#EDF0E6,stroke:#697957,color:#342F28;
+    class tool,check,router,validated code;
+    classDef evidence fill:#F1EADD,stroke:#93805D,color:#342F28;
+    class shadow evidence;
+    classDef optional fill:#F6EDDC,stroke:#9A7440,color:#342F28;
+    class chat_judge optional;
+    classDef future fill:#EEEDE8,stroke:#999389,color:#342F28;
+    linkStyle default stroke:#887E6B,stroke-width:1.5px;

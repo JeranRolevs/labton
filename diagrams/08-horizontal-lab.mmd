@@ -1,0 +1,39 @@
+%% Generated from specs.py; 2026-10-31. Current runtime; gray nodes are planned.
+flowchart LR
+    setup["Choose mission + lab<br/>Six editable Markdown styles"]
+    control["Orchestrate<br/>Dependencies + global budgets"]
+    teams["Configured researchers<br/>One scientist or bounded teams"]
+    run["Execute and measure<br/>Qualified local sandbox + evaluator"]
+    confirm["Confirm candidate<br/>Reserved; no agent feedback"]
+    out["Candidate + receipts<br/>Measured tradeoffs and limits"]
+    user["User / administration<br/>Selects and changes settings"]
+    settings["Recorded configuration<br/>Models, counts, depth and budgets<br/>No automatic redesign"]
+    sharing["Horizontal Markdown<br/>none / low / intermediate / high<br/>wisdom alone or with detail"]
+    decision["Optional local decisions<br/>LLM → decision endpoint → LLM<br/>Shared budgets and per-backend usage"]
+    stats["User-selected statistics<br/>CP95 counts; explicit-prior Bayes<br/>Domain-owned analysis"]
+    future["General asset lifecycle<br/>Integration and registry planned"]
+    setup --> control
+    control --> teams
+    teams --> run
+    run --> confirm
+    confirm --> out
+    user --> setup
+    settings --> control
+    sharing --> teams
+    decision -.-> run
+    stats --> confirm
+    out -.-> future
+    run -->|development evidence → candidate refinement| control
+    classDef artifact fill:#FCFAF4,stroke:#99876F,color:#342F28;
+    class setup,out,user artifact;
+    classDef llm fill:#E9EEEE,stroke:#5B7580,color:#342F28;
+    class teams llm;
+    classDef code fill:#EDF0E6,stroke:#697957,color:#342F28;
+    class control,run,confirm,stats code;
+    classDef evidence fill:#F1EADD,stroke:#93805D,color:#342F28;
+    class settings,sharing evidence;
+    classDef optional fill:#F6EDDC,stroke:#9A7440,color:#342F28;
+    class decision optional;
+    classDef future fill:#EEEDE8,stroke:#999389,color:#342F28;
+    class future future;
+    linkStyle default stroke:#887E6B,stroke-width:1.5px;

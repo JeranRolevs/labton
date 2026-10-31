@@ -1,0 +1,29 @@
+%% Generated from specs.py; 2026-10-31. Current runtime; gray nodes are planned.
+flowchart LR
+    agent["LLM episode<br/>Prime or child"]
+    tool["decision.assess<br/>Scope + spec + inherited budget"]
+    router["Configured mode<br/>llm_only / shadow / selected_active"]
+    same["Same generation LLM<br/>LLM-only or logged fallback"]
+    chat_judge["Chat decision adapter<br/>Bounded JSON judgment"]
+    typed_judge["Typed decision adapter<br/>Separate key, endpoint and model"]
+    validate["Validate + record answer<br/>Typed result and actual usage"]
+    resume["Resume same episode<br/>Continue generation/tool work"]
+    agent --> tool
+    tool --> router
+    router -->|LLM-only| same
+    router -.->|eligible| chat_judge
+    router -.->|selected provider| typed_judge
+    same --> validate
+    chat_judge -.->|active result| validate
+    typed_judge -.-> validate
+    validate --> resume
+    classDef artifact fill:#FCFAF4,stroke:#99876F,color:#342F28;
+    classDef llm fill:#E9EEEE,stroke:#5B7580,color:#342F28;
+    class agent,same,resume llm;
+    classDef code fill:#EDF0E6,stroke:#697957,color:#342F28;
+    class tool,router,validate code;
+    classDef evidence fill:#F1EADD,stroke:#93805D,color:#342F28;
+    classDef optional fill:#F6EDDC,stroke:#9A7440,color:#342F28;
+    class chat_judge,typed_judge optional;
+    classDef future fill:#EEEDE8,stroke:#999389,color:#342F28;
+    linkStyle default stroke:#887E6B,stroke-width:1.5px;

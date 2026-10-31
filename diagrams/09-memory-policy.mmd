@@ -1,0 +1,38 @@
+%% Generated from specs.py; 2026-10-31. Current runtime; gray nodes are planned.
+flowchart LR
+    generation["Model authors policy source<br/>Configured model + actor provenance"]
+    validate["Source/API validation<br/>select(bank, ages, new, t, capacity, aux)"]
+    supervisor["Trusted supervisor<br/>Score current x against OLD bank"]
+    worker["OS-sandboxed policy<br/>Causal x,t; retained indices + aux<br/>No labels, seeds or future"]
+    chat_judge["Optional decision backend<br/>Configured chat or typed endpoint"]
+    panels["Private scenario panels<br/>Clean calibration / benign / fault<br/>Development separate from confirmation"]
+    metrics["Independent-run evaluation<br/>Any-alarm rate, fault recall, recurrence<br/>CP95 / optional explicit-prior Bayes"]
+    receipts["Actual experiment receipts<br/>Source hash, counts, state, RSS and time"]
+    feedback["Development feedback<br/>Within declared research budget"]
+    output["Source + evidence + limits<br/>Include failed / inconclusive outcomes"]
+    confirm["One reserved confirmation<br/>Fixed source; fresh clean calibration<br/>Never feedback to the acting agents"]
+    generation --> validate
+    validate --> supervisor
+    supervisor -->|causal input| worker
+    worker -->|retained indices + aux| supervisor
+    panels --> supervisor
+    supervisor --> metrics
+    metrics --> receipts
+    generation -.-> chat_judge
+    chat_judge -.-> generation
+    receipts -->|development only| feedback
+    feedback --> generation
+    receipts --> confirm
+    confirm --> output
+    classDef artifact fill:#FCFAF4,stroke:#99876F,color:#342F28;
+    class output artifact;
+    classDef llm fill:#E9EEEE,stroke:#5B7580,color:#342F28;
+    class generation llm;
+    classDef code fill:#EDF0E6,stroke:#697957,color:#342F28;
+    class validate,supervisor,worker,metrics,confirm code;
+    classDef evidence fill:#F1EADD,stroke:#93805D,color:#342F28;
+    class panels,receipts,feedback evidence;
+    classDef optional fill:#F6EDDC,stroke:#9A7440,color:#342F28;
+    class chat_judge optional;
+    classDef future fill:#EEEDE8,stroke:#999389,color:#342F28;
+    linkStyle default stroke:#887E6B,stroke-width:1.5px;

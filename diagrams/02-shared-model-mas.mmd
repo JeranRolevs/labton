@@ -1,0 +1,30 @@
+%% Generated from specs.py; 2026-10-31. Current runtime; gray nodes are planned.
+flowchart LR
+    user["User-selected design<br/>A / B / C / D / E / F"]
+    runtime["Bounded scheduler<br/>Ready waves + shared budgets"]
+    model["Configured generation model<br/>One model fills all roles"]
+    a["Prime A<br/>Own approach + context<br/>Optional children 0..K, depth D"]
+    b["Prime B<br/>Own approach + context<br/>Optional children 0..K, depth D"]
+    c["Prime N<br/>Own approach + context<br/>Optional children 0..K, depth D"]
+    sharing["Barrier + filtered Markdown<br/>none / low / intermediate / high<br/>Wisdom alone or with detail"]
+    receipts["Experiment receipts<br/>Qualified local evaluator"]
+    runtime --> a
+    runtime --> b
+    runtime --> c
+    user --> runtime
+    runtime --> model
+    a --> sharing
+    b --> sharing
+    c --> receipts
+    sharing -->|next permitted phase| runtime
+    classDef artifact fill:#FCFAF4,stroke:#99876F,color:#342F28;
+    class user artifact;
+    classDef llm fill:#E9EEEE,stroke:#5B7580,color:#342F28;
+    class model,a,b,c llm;
+    classDef code fill:#EDF0E6,stroke:#697957,color:#342F28;
+    class runtime code;
+    classDef evidence fill:#F1EADD,stroke:#93805D,color:#342F28;
+    class sharing,receipts evidence;
+    classDef optional fill:#F6EDDC,stroke:#9A7440,color:#342F28;
+    classDef future fill:#EEEDE8,stroke:#999389,color:#342F28;
+    linkStyle default stroke:#887E6B,stroke-width:1.5px;

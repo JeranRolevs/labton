@@ -1,0 +1,20 @@
+include README.md AGENTS.md LICENSE LICENSING.md
+recursive-include src/labton/resources *.yaml *.json *.md *.py *.html *.css *.js
+recursive-include src/labton/schemas *.json
+recursive-include lab_designs *.md
+recursive-include configs *.yaml *.md
+recursive-include prompts *.md
+recursive-include templates *.yaml *.md *.json
+recursive-include examples *.py *.md *.yaml
+recursive-include tools *.py
+recursive-include diagrams *.py *.mmd *.svg
+recursive-include docs *.md *.json
+global-exclude __pycache__ *.py[cod] private_splits.json .env .env.*
+prune setup
+prune trials
+prune results
+prune data
+prune local-reference
+prune archive
+exclude docs/CODE_PROVENANCE_AUDIT.md docs/provenance_audit.json
+exclude RELATED_WORK_REVIEW.md REVIEW.md PLAN.md idea_flow.md

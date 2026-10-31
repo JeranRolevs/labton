@@ -1,0 +1,40 @@
+[build-system]
+requires = ["setuptools>=77", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "labton"
+version = "0.2.0"
+description = "Configurable multi-agent discovery labs with optional decision specialists"
+authors = [{name = "Goran Mitevski"}]
+readme = "README.md"
+requires-python = ">=3.11"
+license = "LicenseRef-Labton-Academic-Research-1.0"
+license-files = ["LICENSE", "LICENSING.md"]
+dependencies = ["PyYAML>=6,<7", "jsonschema>=4,<5"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Science/Research",
+    "Programming Language :: Python :: 3",
+]
+
+[project.urls]
+Repository = "https://github.com/JeranRolevs/labton"
+Issues = "https://github.com/JeranRolevs/labton/issues"
+License = "https://github.com/JeranRolevs/labton/blob/main/LICENSE"
+
+[project.optional-dependencies]
+memory = ["numpy>=1.24", "scipy>=1.10", "psutil>=5.9"]
+diagrams = ["matplotlib>=3.6", "Pillow>=9"]
+
+[project.scripts]
+labton = "labton.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["labton*"]
+namespaces = false
+
+[tool.setuptools.package-data]
+"labton.schemas" = ["*.json"]
+"labton.resources" = ["*.yaml", "starter/**/*", "visualization/*"]

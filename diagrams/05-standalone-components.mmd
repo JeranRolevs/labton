@@ -1,0 +1,30 @@
+%% Generated from specs.py; 2026-10-31. Current runtime; gray nodes are planned.
+flowchart LR
+    package["Labton Python package<br/>CLI + schemas + study runner"]
+    init["Workspace initializer<br/>Bundled presets + examples"]
+    workspace["User workspace<br/>Editable designs, study and mission"]
+    provider["Generation + decision adapters<br/>Configured generation and decisions"]
+    orchestrate["Study orchestration<br/>Contexts, budgets and barriers"]
+    domain["Qualified domain adapter<br/>Separate sandboxed policy worker"]
+    config["User choices<br/>Style, sharing, models, statistics"]
+    evidence["Trial evidence<br/>Plans, events, receipts and costs"]
+    private["Private local inputs<br/>Fresh seed panels; no shipped data"]
+    package --> init
+    init --> workspace
+    workspace --> orchestrate
+    provider --> orchestrate
+    orchestrate --> domain
+    orchestrate --> evidence
+    private --> domain
+    config --> orchestrate
+    classDef artifact fill:#FCFAF4,stroke:#99876F,color:#342F28;
+    class workspace,config artifact;
+    classDef llm fill:#E9EEEE,stroke:#5B7580,color:#342F28;
+    classDef code fill:#EDF0E6,stroke:#697957,color:#342F28;
+    class package,init,orchestrate,domain code;
+    classDef evidence fill:#F1EADD,stroke:#93805D,color:#342F28;
+    class evidence,private evidence;
+    classDef optional fill:#F6EDDC,stroke:#9A7440,color:#342F28;
+    class provider optional;
+    classDef future fill:#EEEDE8,stroke:#999389,color:#342F28;
+    linkStyle default stroke:#887E6B,stroke-width:1.5px;

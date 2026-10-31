@@ -1,0 +1,31 @@
+%% Generated from specs.py; 2026-10-31. Current runtime; gray nodes are planned.
+flowchart LR
+    task["Mission<br/>Comparator + constraints"]
+    agent["One LLM agent<br/>User-selected endpoint + model"]
+    run["Experiment tool<br/>Qualified domain adapter"]
+    evidence["Measured receipts<br/>Source, counts and costs"]
+    decision["Optional decision call<br/>LLM-only / active / shadow"]
+    budget["Budget and eligibility<br/>Continue candidate research?"]
+    confirm["Reserved confirmation<br/>Fixed candidate; no feedback"]
+    out["Candidate + evidence<br/>Include failures and limits"]
+    task --> agent
+    agent --> run
+    run --> evidence
+    evidence --> budget
+    budget -->|development| agent
+    agent -.-> decision
+    decision -.->|resume| agent
+    budget -->|if reserved| confirm
+    confirm --> out
+    classDef artifact fill:#FCFAF4,stroke:#99876F,color:#342F28;
+    class task,out artifact;
+    classDef llm fill:#E9EEEE,stroke:#5B7580,color:#342F28;
+    class agent llm;
+    classDef code fill:#EDF0E6,stroke:#697957,color:#342F28;
+    class run,budget,confirm code;
+    classDef evidence fill:#F1EADD,stroke:#93805D,color:#342F28;
+    class evidence evidence;
+    classDef optional fill:#F6EDDC,stroke:#9A7440,color:#342F28;
+    class decision optional;
+    classDef future fill:#EEEDE8,stroke:#999389,color:#342F28;
+    linkStyle default stroke:#887E6B,stroke-width:1.5px;

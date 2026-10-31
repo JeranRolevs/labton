@@ -1,0 +1,28 @@
+%% Generated from specs.py; 2026-10-31. Current runtime; gray nodes are planned.
+flowchart LR
+    choices["User-selected effort<br/>Low 1 / medium 3 / persistent 6<br/>Or persistent to budget allowance"]
+    scientist["One scientist<br/>Investigate, implement and interpret<br/>No peer teams or delegated children"]
+    tools["Permitted tools + evidence<br/>Development receipts and failures"]
+    budget["Shared study budgets<br/>Requests, time and evaluations<br/>No replenishment at sequence changes"]
+    review["Next investigative pass<br/>Audit, test, revise, try alternatives"]
+    boundary["Pass / sequence boundary<br/>Run selected sequences in order (1..N)<br/>Continue the same context by default"]
+    confirm["One final confirmation<br/>After all development; no agent feedback"]
+    out["Candidate + saved evidence<br/>Execution end is separate from validity"]
+    choices --> scientist
+    scientist --> tools
+    tools --> boundary
+    boundary -->|more passes / sequences| review
+    budget -->|check before requests| review
+    review --> scientist
+    boundary -->|development ends| confirm
+    confirm --> out
+    classDef artifact fill:#FCFAF4,stroke:#99876F,color:#342F28;
+    class choices,out artifact;
+    classDef llm fill:#E9EEEE,stroke:#5B7580,color:#342F28;
+    class scientist,review llm;
+    classDef code fill:#EDF0E6,stroke:#697957,color:#342F28;
+    class tools,budget,boundary,confirm code;
+    classDef evidence fill:#F1EADD,stroke:#93805D,color:#342F28;
+    classDef optional fill:#F6EDDC,stroke:#9A7440,color:#342F28;
+    classDef future fill:#EEEDE8,stroke:#999389,color:#342F28;
+    linkStyle default stroke:#887E6B,stroke-width:1.5px;

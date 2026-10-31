@@ -1,0 +1,29 @@
+%% Generated from specs.py; 2026-10-31. Current runtime; gray nodes are planned.
+flowchart LR
+    mission["Define useful improvement<br/>Comparator + metrics + constraints"]
+    hyp["Competing approaches<br/>Hypotheses + falsifiers"]
+    experiment["Build and evaluate<br/>Qualified bounded experiment"]
+    receipt["Evidence + failures<br/>Counts, uncertainty and source"]
+    revise["Interpret and revise<br/>Development feedback only"]
+    fix["Fix candidate source<br/>Before confirmation"]
+    confirm["Independent confirmation<br/>Fresh separate calibration panel"]
+    artifact["Candidate + evidence<br/>Scope, costs and unresolved cases"]
+    mission --> hyp
+    hyp --> experiment
+    experiment --> receipt
+    receipt --> revise
+    revise -->|within budget| hyp
+    revise -->|declared selection| fix
+    fix --> confirm
+    confirm --> artifact
+    classDef artifact fill:#FCFAF4,stroke:#99876F,color:#342F28;
+    class mission,artifact artifact;
+    classDef llm fill:#E9EEEE,stroke:#5B7580,color:#342F28;
+    class hyp,revise llm;
+    classDef code fill:#EDF0E6,stroke:#697957,color:#342F28;
+    class experiment,fix,confirm code;
+    classDef evidence fill:#F1EADD,stroke:#93805D,color:#342F28;
+    class receipt evidence;
+    classDef optional fill:#F6EDDC,stroke:#9A7440,color:#342F28;
+    classDef future fill:#EEEDE8,stroke:#999389,color:#342F28;
+    linkStyle default stroke:#887E6B,stroke-width:1.5px;

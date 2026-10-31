@@ -1,0 +1,23 @@
+%% Generated from specs.py; 2026-10-31. Current runtime; gray nodes are planned.
+flowchart LR
+    plan["User-selected lab plan<br/>Design, personas, sharing and budgets"]
+    setup["Agent 1: setup visualizer<br/>Resolve process and team maps"]
+    page["Local web observatory<br/>Workflow / team / activity / inspect<br/>Live updates or offline HTML snapshot"]
+    runner["Labton research runtime<br/>User-authorized study execution"]
+    activity["Metadata + heartbeat<br/>Nodes, actors, request/evaluation bounds"]
+    observer["Agent 2: runtime observer<br/>Correlate activity; mark stale/failed work"]
+    plan --> setup
+    setup --> page
+    runner --> activity
+    activity --> observer
+    observer --> page
+    classDef artifact fill:#FCFAF4,stroke:#99876F,color:#342F28;
+    class plan,page artifact;
+    classDef llm fill:#E9EEEE,stroke:#5B7580,color:#342F28;
+    classDef code fill:#EDF0E6,stroke:#697957,color:#342F28;
+    class setup,runner,observer code;
+    classDef evidence fill:#F1EADD,stroke:#93805D,color:#342F28;
+    class activity evidence;
+    classDef optional fill:#F6EDDC,stroke:#9A7440,color:#342F28;
+    classDef future fill:#EEEDE8,stroke:#999389,color:#342F28;
+    linkStyle default stroke:#887E6B,stroke-width:1.5px;
