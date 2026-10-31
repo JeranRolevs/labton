@@ -101,14 +101,18 @@ def overview(selected):
 def main():
     parser=argparse.ArgumentParser()
     parser.add_argument("--mermaid-only",action="store_true")
+    parser.add_argument("--diagram",action="append",help="Regenerate only a named diagram stem; may be repeated")
     args=parser.parse_args()
-    selected=diagrams()
+    all_specs=diagrams()
+    if args.diagram and set(args.diagram)-{g["stem"] for g in all_specs}:
+        parser.error("Unknown diagram stem")
+    selected=[g for g in all_specs if not args.diagram or g["stem"] in args.diagram]
     for g in selected:
         (OUT/(g["stem"]+".mmd")).write_text(mermaid(g),encoding="utf-8")
         if not args.mermaid_only:
             render(g)
     if not args.mermaid_only:
-        overview(selected)
+        overview(all_specs)
     print(f"Updated {len(selected)} diagrams from one specification.")
     return 0
 

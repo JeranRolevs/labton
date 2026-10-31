@@ -115,14 +115,14 @@ class MemoryResearchBackend:
         if not isinstance(candidate,dict) or set(candidate)!={"name","source"} or not all(isinstance(candidate[k],str) for k in candidate) or not candidate["name"].strip() or len(candidate["source"].encode())>16384:
             return {"status":"unsupported","reason":"Supply name and Python source, at most 16384 bytes."}
         allowance=self.plan["budget"]["max_evaluations"]-self.plan["budget"]["confirmation_evaluations_reserved"]
-        if self.calls>=allowance: return {"status":"budget_exhausted","reason":"Development allowance exhausted."}
-        remaining=self.deadline-time.monotonic()
-        if remaining<=0: return {"status":"budget_exhausted","reason":"Research wall-time allowance exhausted."}
-        bounded=dict(self.config,timeout_seconds=min(self.config["timeout_seconds"],remaining))
-        self.calls+=1;job=self.root/(str(self.calls).zfill(3)+"-"+uuid4().hex[:12])
         author={"actor":actor,"team":team,"generation_model":self.generation_model,
                 "source_sha256":hashlib.sha256(candidate["source"].encode()).hexdigest()}
         async with self.semaphore:
+            if self.calls>=allowance: return {"status":"budget_exhausted","reason":"Development allowance exhausted."}
+            remaining=self.deadline-time.monotonic()
+            if remaining<=0: return {"status":"budget_exhausted","reason":"Research wall-time allowance exhausted."}
+            bounded=dict(self.config,timeout_seconds=min(self.config["timeout_seconds"],remaining))
+            self.calls+=1;job=self.root/(str(self.calls).zfill(3)+"-"+uuid4().hex[:12])
             result=await asyncio.to_thread(execute,self.workspace,job,bounded,"evaluate",candidate,"development",
                                          self.plan["statistics"]["approach"],author)
         self.receipts[result["receipt_id"]]={"actor":actor,"team":team,"candidate":candidate,"result":result}

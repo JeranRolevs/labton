@@ -16,7 +16,7 @@ import re
 import time
 from uuid import uuid4
 
-from .config import merge, parse_yaml, project_file
+from .config import merge, parse_yaml, project_file, validate
 from .contracts import CallerContext, DecisionRequest, DecisionResult, DecisionStatus
 from .planning import compile_plan
 from .research import ResearchBackend, ResearchError, qualify_workspace, create_backend
@@ -28,11 +28,13 @@ from .providers.typed import TypedDecisionBackend
 from .decisions import decision_client_for, resolve_specialist, validate_declarations
 from .visualization import activity_metadata, HEARTBEAT_SECONDS, CONFIRMATION_NODE
 from .persistence import pass_task
+from .sharing import filtered_view
 
 ACTOR = ContextVar("study_actor", default=None)
 NODE = ContextVar("study_node", default=None)
 SCIENTIST_COMPARISON_FIELDS = ("scientist_persistence", "scientist_effort_mode", "scientist_sequences",
                                "scientist_context_policy", "scientist_sequences_completed", "scientist_passes_completed")
+MULTI_LAB_COMPARISON_FIELDS = ("lab_count", "lab_sequences", "lab_sequences_completed", "lab_meeting", "lab_sharing")
 
 
 class StudyError(ValueError):
@@ -66,6 +68,8 @@ def load_study(workspace):
     fields = {"schema_version", "name", "problem_file", "provider", "runtime", "base_overrides", "variants"}
     if isinstance(c, dict) and "decision_providers" in c:
         fields.add("decision_providers")
+    if isinstance(c, dict) and "multi_lab" in c:
+        fields.add("multi_lab")
     mapping(c, fields, "study")
     validate_declarations(c, workspace)
     if c["schema_version"] != 1 or not isinstance(c["name"], str) or not c["name"].strip():
@@ -93,6 +97,7 @@ def load_study(workspace):
                 "output_count", "chat_input_tokens", "chat_output_tokens", "decision_input_tokens",
                 "decision_output_tokens", "missing_usage_receipts", "measurement_source"}
     reserved.update(SCIENTIST_COMPARISON_FIELDS)
+    reserved.update(MULTI_LAB_COMPARISON_FIELDS)
     reserved.add("configuration_snapshot_id")
     if set(r["comparison_metrics"]) & reserved:
         raise StudyError("Comparison metric names conflict with system columns.")
@@ -106,6 +111,11 @@ def load_study(workspace):
         if not isinstance(v["id"], str) or not re.fullmatch(r"[a-z][a-z0-9_-]*", v["id"]) or v["id"] in seen or not isinstance(v["overrides"], dict):
             raise StudyError("Variants need unique lowercase path-safe IDs and mapping overrides.")
         seen.add(v["id"])
+    if "multi_lab" in c:
+        validate(c["multi_lab"], "multi_lab.schema.json")
+        labs = c["multi_lab"]["labs"]
+        if len({lab["id"] for lab in labs}) != len(labs) or any(lab["variant"] not in seen for lab in labs):
+            raise StudyError("Multi-lab entries need unique lab IDs and existing study variants.")
     project_file(workspace, c["problem_file"])
     if not (workspace / p["env_file"]).resolve().is_relative_to(workspace):
         raise StudyError("The private env file must stay inside the workspace.")
@@ -268,13 +278,16 @@ Do not invent evidence IDs. State uncertainty. Wisdom omits identities, rankings
 
 
 class TextStudy:
-    def __init__(self, project, workspace, config, plan, variant, key):
+    def __init__(self, project, workspace, config, plan, variant, key, *, trial_root=None,
+                 shared_limits=None, event_sink=None):
         self.project, self.workspace, self.config, self.plan, self.key = project, workspace, config, plan, key
+        self.shared_limits, self.event_sink = shared_limits, event_sink
+        self.inter_lab_context = {}
         self._secrets = {key} if key else set()
         self.specialist_client = None
         self.decision_settings = None
         self.id = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%S") + "-" + variant + "-" + uuid4().hex[:8]
-        self.root = workspace / "trials" / self.id
+        self.root = trial_root if trial_root is not None else workspace / "trials" / self.id
         self.root.mkdir(parents=True, exist_ok=False)
         self.started = time.monotonic()
         self.calls = self.events = self.active = 0
@@ -318,6 +331,7 @@ Generalization to external datasets and unimplemented analysis methods is untest
 initial tool, so do not claim those capabilities solved.
 """
         self.client = client_for(config, key, reserve=self.reserve, on_event=self.event,
+                                 shared_semaphore=shared_limits.llm_semaphore if shared_limits else None,
                                  max_parallel=min(config["provider"]["max_parallel_requests"], plan["resources"]["max_llm_requests"]))
         if plan["decision_service"]["mode"] != "llm_only":
             self.decision_settings = resolve_specialist(config, plan["decision_service"]["specialist"])
@@ -395,6 +409,8 @@ initial tool, so do not claim those capabilities solved.
             stream.write(json.dumps(event, allow_nan=False) + "\n")
         with (self.root / "activity.jsonl").open("a") as stream:
             stream.write(json.dumps(activity_metadata(event), allow_nan=False) + "\n")
+        if self.event_sink is not None:
+            self.event_sink(activity_metadata(event))
 
     @contextmanager
     def activity(self, category):
@@ -428,8 +444,10 @@ initial tool, so do not claim those capabilities solved.
             raise StudyError("Trial request budget exhausted, including decisions and fallbacks.")
         if time.monotonic() - self.started >= self.plan["budget"]["max_wall_seconds"]:
             raise StudyError("Trial wall-time budget exhausted.")
-        self.calls += 1
         remaining = self.plan["budget"]["max_wall_seconds"] - (time.monotonic() - self.started)
+        if self.shared_limits is not None:
+            remaining = min(remaining, self.shared_limits.reserve_request())
+        self.calls += 1
         if self.sequence_deadline is not None:
             remaining = min(remaining, self.sequence_deadline - time.monotonic())
         self.client.timeout = min(self.config["provider"]["timeout_seconds"], remaining)
@@ -441,39 +459,16 @@ initial tool, so do not claim those capabilities solved.
         if not policy["research_exchange"]:
             return {}
         peers = [row for row in self.outputs if row["team"] != team]
-        view, entries = {}, []
-        detail = policy["detail"]
-        if detail in {"intermediate", "high"}:
-            for row in peers:
-                entry = {"summary": row["output"]["summary"]}
-                if detail == "high":
-                    entry.update(findings=row["output"]["findings"], candidate_output=row["output"]["candidate_output"])
-                entries.append(entry)
-        if detail=="low" and self.research is not None:
-            for row in peers:
-                for finding in row["output"]["findings"]:
-                    refs=finding.get("evidence_refs",[])
-                    if finding.get("kind")=="dead_end" and isinstance(refs,list) and any(
-                        ref in self.research.receipts and self.research.receipts[ref]["result"].get("status")=="valid"
-                        for ref in refs if isinstance(ref,str)):
-                        entries.append({"agent_interpretation":finding.get("text"),"evidence_refs":refs,
-                                        "status":"measured_development_evidence_not_a_confirmed_general_claim"})
-        # Without real evaluator receipts, low publishes no tested dead ends.
-        if detail != "none":
-            view[detail + ".md"] = "\n\n".join(json.dumps(entry) for entry in entries)
-        if policy["wisdom"]:
-            view["wisdom.md"] = "\n\n".join(json.dumps(item) for row in peers for item in row["output"]["wisdom"])
-        remaining = policy["max_read_words"]
-        for name in view:
-            view[name] = " ".join(view[name].split()[:remaining])
-            remaining -= len(view[name].split())
+        valid = (ref for ref, entry in self.research.receipts.items()
+                 if entry["result"].get("status") == "valid") if self.research is not None else ()
+        view, low_count = filtered_view(peers, policy, valid)
         view = self.clean(view)
         folder = self.root / "communication" / actor / str(self.events+1).zfill(6)
         folder.mkdir(parents=True, exist_ok=True)
         for name, text in view.items():
             (folder / name).write_text(text + "\n")
         self.event({"kind": "sharing_read", "profile": policy["effective_profile"], "files": list(view),
-                    "words": sum(len(v.split()) for v in view.values()), "low_tested_dead_ends": len(entries) if detail=="low" else 0,
+                    "words": sum(len(v.split()) for v in view.values()), "low_tested_dead_ends": low_count,
                     "semantic_filtering": "structured_agent_output_best_effort_not_formal"})
         return view
 
@@ -516,7 +511,7 @@ initial tool, so do not claim those capabilities solved.
         return {"status": "answered", "backend": "same_llm_fallback", "specialist_status": str(result.status),
                 "answer": await self.judge(question, state)}
 
-    async def episode(self, actor, team, role, task, *, depth=0, parent_context=None):
+    async def episode(self, actor, team, role, task, *, depth=0, parent_context=None, tools_allowed=True):
         if self.active >= self.plan["resources"]["max_active_agents"]:
             return {"status": "resource_denied", "summary": "Active-agent limit reached."}
         if depth and self.descendants.get(team, 0) >= self.plan["delegation"]["max_active_descendants"]:
@@ -535,7 +530,8 @@ initial tool, so do not claim those capabilities solved.
                     {"role": "user", "content": json.dumps({"problem": self.problem, "parent_permitted_context": parent_context})}]
             messages = self.history[actor]
             messages.append({"role": "user", "content": json.dumps({"phase_task": task, "peer_views": self.peer_view(actor, team),
-                            "statistics": self.plan["statistics"], "runtime": self.config["runtime"]["mode"]})})
+                            "statistics": self.plan["statistics"], "runtime": self.config["runtime"]["mode"],
+                            **({"lab_exchange": self.inter_lab_context} if self.inter_lab_context else {})})})
             decisions = children = 0
             for turn in range(self.config["runtime"]["max_actions_per_episode"]):
                 reply = await self.client.generate(self.clean(messages), budget_ref=self.id)
@@ -559,6 +555,8 @@ initial tool, so do not claim those capabilities solved.
                     save(self.root / "actors" / actor / (episode.replace(":", "_")+".json"), self.clean(output))
                     outcome = "completed"
                     return output
+                if not tools_allowed:
+                    raise StudyError("Meeting contributions accept final actions only; no research tools are dispatched.")
                 if action.get("action") == "decision.assess":
                     if decisions >= self.plan["decision_service"]["max_calls_per_episode"]:
                         response = {"status": "budget_exhausted", "reason": "Episode decision-call limit."}
@@ -661,6 +659,9 @@ initial tool, so do not claim those capabilities solved.
             return result
         remaining_calls = self.plan["budget"]["max_llm_calls"] - self.calls
         remaining_time = self.plan["budget"]["max_wall_seconds"] - (time.monotonic() - self.started)
+        if self.shared_limits is not None:
+            remaining_calls = min(remaining_calls, self.shared_limits.remaining_requests())
+            remaining_time = min(remaining_time, self.shared_limits.remaining_time())
         remaining_sequences = self.execution["sequences"] - sequence + 1
         if remaining_calls < remaining_sequences or remaining_time <= 0:
             raise StudyError("Shared budget exhausted before the remaining single-scientist sequences could execute.")
@@ -758,7 +759,26 @@ initial tool, so do not claim those capabilities solved.
                 completed.add(node["id"])
                 del pending[node["id"]]
 
-    async def run(self):
+    async def finalize_research(self, *, confirm=True):
+        if self.research is None:
+            return
+        if confirm and self.summary["status"] == "completed_text_workflow":
+            node_token = NODE.set(CONFIRMATION_NODE)
+            actor_token = ACTOR.set({"id": "system:verification", "team": "system", "episode": "confirmation"})
+            try:
+                with self.activity("confirmation"):
+                    await self.research.complete()
+            finally:
+                ACTOR.reset(actor_token)
+                NODE.reset(node_token)
+            self.summary["status"] = "completed_research_pilot"
+        research_summary = self.research.finalize()
+        self.summary["research"] = research_summary
+        self.summary["verification_status"] = (
+            "confirmation_evaluated_exploratory" if research_summary["confirmation_metrics"] else "no_valid_confirmation")
+
+    async def run(self, *, finalize=True):
+        self.summary["status"] = "running"
         self.heartbeat()
         pulse = asyncio.create_task(self.pulse())
         try:
@@ -776,22 +796,8 @@ initial tool, so do not claim those capabilities solved.
             raise
         finally:
             try:
-                if self.research is not None:
-                    if self.summary["status"]=="completed_text_workflow":
-                        node_token = NODE.set(CONFIRMATION_NODE)
-                        actor_token = ACTOR.set({"id": "system:verification", "team": "system", "episode": "confirmation"})
-                        try:
-                            with self.activity("confirmation"):
-                                await self.research.complete()
-                        finally:
-                            ACTOR.reset(actor_token)
-                            NODE.reset(node_token)
-                        self.summary["status"]="completed_research_pilot"
-                    research_summary=self.research.finalize()
-                    self.summary["research"]=research_summary
-                    self.summary["verification_status"]=(
-                        "confirmation_evaluated_exploratory" if research_summary["confirmation_metrics"]
-                        else "no_valid_confirmation")
+                if finalize:
+                    await self.finalize_research()
             except (ResearchError, OSError, ValueError) as error:
                 self.summary["status"]="failed_or_incomplete"
                 self.summary["verification_status"]="not_evaluated"
@@ -855,6 +861,11 @@ def compare(workspace):
                        scientist_sequences=execution["sequences"], scientist_context_policy=execution["context_policy"],
                        scientist_sequences_completed=progress.get("completed_sequences", 0),
                        scientist_passes_completed=progress.get("completed_passes", 0))
+        if execution.get("kind") == "multi_lab":
+            saved_plan = json.loads((path.parent / "plan.json").read_text())
+            row.update(lab_count=execution["lab_count"], lab_sequences=execution["sequences"],
+                       lab_sequences_completed=(summary.get("sequence_progress") or {}).get("completed_sequences", 0),
+                       lab_meeting=execution["meeting"], lab_sharing=saved_plan["communication"]["effective_profile"])
         usage = summary.get("usage") or {}
         row.update({name: usage.get(name, 0) for name in (
             "chat_input_tokens", "chat_output_tokens", "decision_input_tokens",
@@ -873,7 +884,7 @@ def compare(workspace):
             row["measurement_source"] = " | ".join(data["source_refs"])
         rows.append(row)
     columns = ["trial_id", "variant", "status", "verification_status", "elapsed_seconds", "provider_post_requests", "output_count",
-               "configuration_snapshot_id", *SCIENTIST_COMPARISON_FIELDS,
+               "configuration_snapshot_id", *SCIENTIST_COMPARISON_FIELDS, *MULTI_LAB_COMPARISON_FIELDS,
                "chat_input_tokens", "chat_output_tokens", "decision_input_tokens",
                "decision_output_tokens", "missing_usage_receipts",
                *config["runtime"]["comparison_metrics"], "measurement_source"]
@@ -900,8 +911,23 @@ def compare(workspace):
 
 
 def command(project, workspace, operation, *, live=False, variant=None, persistence=None, sequences=None,
-            effort_mode=None, sequence_context=None):
+            effort_mode=None, sequence_context=None, multi_lab=False):
     project, workspace = project.resolve(), workspace.resolve()
+    if multi_lab:
+        from .multi_lab import compile_multi_lab, run_multi_lab
+        if variant is not None or persistence is not None or effort_mode is not None:
+            raise StudyError("Multi-lab selects per-lab variants and effort settings from study.yaml.")
+        if operation == "prepare":
+            plan = compile_multi_lab(project, load_study(workspace), sequences=sequences, sequence_context=sequence_context)
+            save(workspace / "plans/multi-lab.json", plan)
+            return {"status": "prepared", "variant": "multi-lab", "labs": [lab["id"] for lab in plan["multi_lab"]["labs"]],
+                    "sequences": plan["execution"]["sequences"], "meeting": plan["execution"]["meeting"], "api_calls": 0,
+                    "research_started": False, "plan": str(workspace / "plans/multi-lab.json")}
+        if operation == "run":
+            return asyncio.run(run_multi_lab(project, workspace, sequences=sequences, sequence_context=sequence_context))
+        raise StudyError("Choose multi-lab prepare, run or visualize.")
+    if operation == "prepare" and (sequences is not None or sequence_context is not None):
+        raise StudyError("Prepare sequence overrides require --multi-lab; use a scientist variant for single-lab runs.")
     if operation == "qualify":
         config=load_study(workspace)
         if config["runtime"]["mode"]!="research":

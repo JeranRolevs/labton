@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "labton"
-version = "0.2.0"
+version = "0.3.0"
 description = "Configurable multi-agent discovery labs with optional decision specialists"
 authors = [{name = "Goran Mitevski"}]
 readme = "README.md"

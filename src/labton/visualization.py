@@ -23,7 +23,7 @@ from .config import ConfigurationError, project_file
 HEARTBEAT_SECONDS = 2
 STALE_SECONDS = 15
 CONFIRMATION_NODE = "runtime:confirmation"
-TERMINAL = {"completed_text_workflow", "completed_research_pilot", "failed_or_incomplete", "cancelled"}
+TERMINAL = {"completed_text_workflow", "completed_research_pilot", "completed_multi_lab_workflow", "failed_or_incomplete", "cancelled"}
 
 
 def now():
@@ -95,6 +95,8 @@ class SetupVisualizationAgent:
                 for key in ("sequence", "pass"):
                     if key in n:
                         nodes[-1][key] = number(n[key])
+                if "lab" in n:
+                    nodes[-1]["lab"] = text(n["lab"])
                 pending.remove(n)
         # The bounded runner defers confirmation until after all acting episodes.
         nodes.append({"id": CONFIRMATION_NODE, "label": "Reserved confirmation", "kind": "confirmation",
@@ -105,18 +107,20 @@ class SetupVisualizationAgent:
         return {
             "snapshot_id": plan["configuration_snapshot"]["id"],
             "design": {k: text(plan["design"].get(k)) for k in ("id", "name", "governance", "procedure")},
-            "design_letter": Path(plan["design"]["file"]).name.split("-")[0][:1].upper(),
+            "design_letter": "M" if plan.get("execution", {}).get("kind") == "multi_lab" else Path(plan["design"]["file"]).name.split("-")[0][:1].upper(),
             "model": {k: text(plan["configuration_snapshot"]["resolved_config"]["model"].get(k)) for k in ("name", "provider")},
             "communication": text(plan["communication"]["effective_profile"]),
             "statistics": text(plan["statistics"]["approach"]),
             "decision_mode": text(plan["decision_service"]["mode"]),
             "specialist": text(plan["decision_service"].get("specialist")),
-            "resources": {k: number(plan["resources"].get(k)) for k in ("max_active_agents", "max_llm_requests", "max_experiments")},
+            "resources": {k: number(plan["resources"].get(k)) for k in ("max_active_agents", "max_llm_requests", "max_experiments", "max_active_labs")},
             "budget": {k: number(plan["budget"].get(k)) for k in ("max_llm_calls", "max_wall_seconds", "max_evaluations")},
             "delegation": {k: number(plan["delegation"].get(k)) for k in ("max_depth", "max_children_per_agent")},
             "execution": ({key: plan["execution"].get(key) for key in
-                           ("kind", "persistence", "effort_mode", "sequences", "passes_per_sequence", "context_policy")}
-                          if plan.get("execution", {}).get("kind") == "single_scientist" else {"kind": "phase_graph"}),
+                           ("kind", "persistence", "effort_mode", "sequences", "passes_per_sequence", "context_policy", "lab_count", "meeting")}
+                          if plan.get("execution", {}).get("kind") in {"single_scientist", "multi_lab"} else {"kind": "phase_graph"}),
+            "labs": [{"id": text(lab["id"]), "variant": text(lab["variant"]), "design": text(lab["plan"]["design"]["name"]),
+                      "sharing": text(lab["plan"]["communication"]["effective_profile"])} for lab in plan.get("multi_lab", {}).get("labs", [])],
             "actors": actors, "nodes": nodes,
         }
 
@@ -424,13 +428,20 @@ class VisualizationHandler(BaseHTTPRequestHandler):
 
 def visualize(project, *, workspace=None, variant=None, trial=None, output=None, port=8765,
               config="configs/lab.yaml", design=None, profile=None, statistics=None,
-              persistence=None, sequences=None, effort_mode=None, sequence_context=None):
+              persistence=None, sequences=None, effort_mode=None, sequence_context=None, multi_lab=False):
     from .planning import compile_plan
-    if (variant or trial) and (design or profile or statistics or config != "configs/lab.yaml"):
+    if (variant or trial or multi_lab) and (design or profile or statistics or config != "configs/lab.yaml"):
         raise ConfigurationError("Variant and saved-trial views use their own settings; preview base-config overrides separately.")
     if trial and any(value is not None for value in (persistence, sequences, effort_mode, sequence_context)):
         raise ConfigurationError("Saved trials retain their recorded persistence and sequence settings.")
-    if variant:
+    if multi_lab:
+        if workspace is None or variant is not None or persistence is not None or effort_mode is not None:
+            raise ConfigurationError("Multi-lab visualization needs a workspace and per-lab settings in study.yaml.")
+        from .study import load_study
+        from .multi_lab import compile_multi_lab
+        plan = compile_multi_lab(project, load_study(workspace), sequences=sequences, sequence_context=sequence_context)
+        variant = "multi-lab"
+    elif variant:
         if workspace is None:
             raise ConfigurationError("--variant requires --workspace.")
         from .study import load_study, plans

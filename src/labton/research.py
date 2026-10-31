@@ -110,6 +110,7 @@ class ResearchBackend:
         self.root=trial_root/"experiments"
         self.plan=plan
         self.calls=0
+        self.deadline=time.monotonic()+plan["budget"]["max_wall_seconds"]
         self.receipts={}
         self.confirmation=None
         self.semaphore=asyncio.Semaphore(plan["resources"]["max_experiments"])
@@ -139,12 +140,16 @@ class ResearchBackend:
             return {"status":"unsupported","reason":"Gamma must lie in [0,1]."}
         # Protected confirmation is not exposed by an agent tool.
         allowance=self.plan["budget"]["max_evaluations"]-self.plan["budget"]["confirmation_evaluations_reserved"]
-        if self.calls>=allowance:
-            return {"status":"budget_exhausted","reason":"Development-evaluation allowance exhausted."}
-        self.calls+=1
-        job=self.root/(str(self.calls).zfill(3)+"-"+uuid4().hex[:12])
         async with self.semaphore:
-            result=await asyncio.to_thread(execute_job,self.workspace,job,self.config,"evaluate",candidate,"development",self.plan["statistics"]["approach"])
+            if self.calls>=allowance:
+                return {"status":"budget_exhausted","reason":"Development-evaluation allowance exhausted."}
+            remaining=self.deadline-time.monotonic()
+            if remaining<=0:
+                return {"status":"budget_exhausted","reason":"Research wall-time allowance exhausted."}
+            bounded=dict(self.config,timeout_seconds=min(self.config["timeout_seconds"],remaining))
+            self.calls+=1
+            job=self.root/(str(self.calls).zfill(3)+"-"+uuid4().hex[:12])
+            result=await asyncio.to_thread(execute_job,self.workspace,job,bounded,"evaluate",candidate,"development",self.plan["statistics"]["approach"])
         self.receipts[result["receipt_id"]]={"actor":actor,"team":team,"result":result}
         return result
 
@@ -155,13 +160,17 @@ class ResearchBackend:
         reserve=self.plan["budget"]["confirmation_evaluations_reserved"]
         if not valid or reserve<1:
             return
+        remaining=self.deadline-time.monotonic()
+        if remaining<=0:
+            return
+        bounded=dict(self.config,timeout_seconds=min(self.config["timeout_seconds"],remaining))
         # Select a detector candidate, never a lab style. This rule is declared before the pilot.
         selected=min(valid,key=lambda e:(e["result"]["metrics"]["calibration_abs_error"],
                      -(e["result"]["metrics"]["event_frame_hit_rate"] or 0),
                      json.dumps(e["result"]["candidate"],sort_keys=True)))
         self.calls+=1
         job=self.root/("confirmation-"+uuid4().hex[:12])
-        self.confirmation=await asyncio.to_thread(execute_job,self.workspace,job,self.config,"evaluate",
+        self.confirmation=await asyncio.to_thread(execute_job,self.workspace,job,bounded,"evaluate",
                      selected["result"]["candidate"],"confirmation",self.plan["statistics"]["approach"])
         self.confirmation["selected_from_receipt"]=selected["result"]["receipt_id"]
         self.confirmation["selection_rule"]="development calibration error, then event-frame power; no holdout feedback"

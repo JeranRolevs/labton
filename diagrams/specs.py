@@ -276,4 +276,30 @@ def diagrams():
     edge(g,"confirm","out","left","right")
     g["footer"]="All sequences share the user's budgets. Controlled allowance stops do not certify a solved mission. No automatic lab redesign."
     result.append(g)
+    g=graph("12-multi-lab", "Multiple labs — research, meetings and selected sequences", "The user chooses the same or different designs, inter-lab sharing, meeting type and sequence count.",width=24,height=13)
+    for args in [
+        ("choices",3,3.3,"User-selected collection","Lab variants, representatives and N sequences","artifact",4.8,1.65),
+        ("lab1",10,3.3,"Lab 1 / selected design","Own histories, agents and evidence","llm",4.8,1.65),
+        ("lab2",10,7,"Lab 2..N / selected designs","Same or different designs; separate context","llm",4.8,1.65),
+        ("sharing",17,3.3,"Filtered lab exchange","None / low / intermediate / high\nOptional conditional wisdom","code",5,1.65),
+        ("meeting",17,7,"Conference / symposium","Presentations; optional discussion rounds\nSame inter-lab restrictions apply","llm",5,1.65),
+        ("budget",3,7,"Group and per-lab limits","Requests and wall time across all sequences\nBounded labs, requests and experiments","code",4.8,1.65),
+        ("next",10,10.6,"User-selected next sequence","Carry own context + permitted peer views\nStop after the chosen sequence count","code",5,1.65),
+        ("confirm",17,10.6,"Per-lab final confirmation","After every sequence and meeting\nNo confirmation feedback to agents","code",5,1.65),
+        ("out",3,10.6,"Lab evidence + proceedings","Retain limits, failures and admitted views","artifact",4.8,1.65),
+    ]:
+        node(g,*args)
+    edge(g,"choices","lab1")
+    edge(g,"choices","lab2","bottom","left",via=((3,4.8),(6.4,4.8),(6.4,7)))
+    edge(g,"lab1","sharing")
+    edge(g,"lab2","sharing","right","left",via=((13.2,7),(13.2,3.3)))
+    edge(g,"sharing","meeting","bottom","top")
+    edge(g,"meeting","next","bottom","right",via=((17,9),(13.5,9),(13.5,10.6)))
+    edge(g,"budget","next","right","left",via=((6.4,7),(6.4,10.6)))
+    edge(g,"next","lab2","top","bottom",label="continue within N",at=(10,9.1),optional=True)
+    edge(g,"next","lab1","left","left",via=((6.9,10.6),(6.9,3.3)),optional=True)
+    edge(g,"next","confirm",label="all sequences end",at=(13.5,10.3))
+    edge(g,"confirm","out","bottom","bottom",via=((17,12),(3,12)))
+    g["footer"]="Meetings are operational only when research sharing is disabled. No automatic lab winner, redesign or extra sequence."
+    result.append(g)
     return result

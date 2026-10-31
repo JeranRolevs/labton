@@ -24,6 +24,7 @@ Start with the [horizontal overview](HORIZONTAL_LAB_FLOW.md),
 | Standalone package | Wheel resources, fresh workspaces and local private panels | [SVG](diagrams/05-standalone-components.svg) · [PNG](diagrams/05-standalone-components.png) · [PDF](diagrams/05-standalone-components.pdf) · [Mermaid](diagrams/05-standalone-components.mmd) |
 | Two-agent lab observatory | Selected setup and metadata-only runtime observation in a local web page | [SVG](diagrams/10-lab-observatory.svg) · [PNG](diagrams/10-lab-observatory.png) · [PDF](diagrams/10-lab-observatory.pdf) · [Mermaid](diagrams/10-lab-observatory.mmd) |
 | Single scientist | Persistence levels, ordered sequences, shared budgets and one final confirmation | [SVG](diagrams/11-single-scientist.svg) · [PNG](diagrams/11-single-scientist.png) · [PDF](diagrams/11-single-scientist.pdf) · [Mermaid](diagrams/11-single-scientist.mmd) |
+| Multiple labs | Separate lab designs, filtered exchange, conference/symposium and selected research sequences | [SVG](diagrams/12-multi-lab.svg) · [PNG](diagrams/12-multi-lab.png) · [PDF](diagrams/12-multi-lab.pdf) · [Mermaid](diagrams/12-multi-lab.mmd) |
 
 ![Horizontal lab flow](diagrams/08-horizontal-lab.svg)
 
@@ -47,5 +48,6 @@ python3 diagrams/render_flowcharts.py
 [specs.py](diagrams/specs.py) is the single source of nodes, edges, text and layout for all
 formats. Edit it and regenerate; do not hand-edit generated Mermaid or SVG.
 Use --mermaid-only to export Mermaid without image dependencies.
+Use --diagram 12-multi-lab to regenerate one specification and update the contact sheet.
 The older render_integrated_lab.py and render_horizontal_lab.py commands delegate to the
 same renderer. [Overview contact sheet](diagrams/overview.png).

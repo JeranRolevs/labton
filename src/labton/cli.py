@@ -19,7 +19,7 @@ from .persistence import PERSISTENCE_PASSES, EFFORT_MODES, SEQUENCE_CONTEXTS
 
 def scientist_options(command):
     command.add_argument("--persistence", choices=tuple(PERSISTENCE_PASSES), help="Single-scientist effort level")
-    command.add_argument("--sequences", type=int, help="Positive number of sequential single-scientist sequences")
+    command.add_argument("--sequences", type=int, help="Number of research sequences for a scientist or multi-lab study")
     command.add_argument("--effort-mode", choices=EFFORT_MODES, help="Fixed passes, or persistent work within shared budget allowances")
     command.add_argument("--sequence-context", choices=SEQUENCE_CONTEXTS, help="Continue working context (default), or explicitly reset between sequences")
 
@@ -36,7 +36,9 @@ def visualization_options(command, *, study=False):
         command.add_argument("--design", help="Select a project-relative design Markdown")
         command.add_argument("--profile", choices=PROFILES)
         command.add_argument("--statistics", choices=STATISTICAL_APPROACHES)
-    command.add_argument("--variant", help="Visualize a study variant instead of the base configuration")
+    selection = command.add_mutually_exclusive_group()
+    selection.add_argument("--variant", help="Visualize a study variant instead of the base configuration")
+    selection.add_argument("--multi-lab", action="store_true", help="Visualize the configured labs, meetings and research sequences")
     command.add_argument("--trial", help="Inspect a saved trial and its recorded setup")
     command.add_argument("--output", type=Path, help="Save a standalone HTML snapshot instead of serving")
     command.add_argument("--port", type=int, default=8765, help="Local viewer port (0 chooses an available port)")
@@ -48,7 +50,7 @@ def main(argv: list[str] | None = None) -> int:
     commands = parser.add_subparsers(dest="command", required=True)
     init = commands.add_parser("init", help="Create a standalone workspace without model calls")
     init.add_argument("destination", type=Path)
-    init.add_argument("--template", choices=("text", "memory", "scientist"), default="text")
+    init.add_argument("--template", choices=("text", "memory", "scientist", "multi-lab"), default="text")
     init.add_argument("--decision-backend", choices=("llm_only", "chat_completions", "typed"), help="Choose a decision protocol without making API calls")
     commands.add_parser("designs", help="List validated Markdown designs")
     visualization_options(commands.add_parser("visualize", help="View a lab process using two local, read-only visualization agents"))
@@ -71,8 +73,14 @@ def main(argv: list[str] | None = None) -> int:
             command.add_argument("--live", action="store_true", help="Metered generation and selected-specialist probes")
             command.add_argument("--variant", help="Check only this variant and its selected decision backend")
         if operation == "run":
-            command.add_argument("--variant", required=True)
+            selection = command.add_mutually_exclusive_group(required=True)
+            selection.add_argument("--variant")
+            selection.add_argument("--multi-lab", action="store_true", help="Run the configured collection of labs")
             scientist_options(command)
+        if operation == "prepare":
+            command.add_argument("--multi-lab", action="store_true")
+            command.add_argument("--sequences", type=int)
+            command.add_argument("--sequence-context", choices=SEQUENCE_CONTEXTS)
         if operation == "visualize":
             visualization_options(command, study=True)
     args = parser.parse_args(argv)
@@ -81,11 +89,13 @@ def main(argv: list[str] | None = None) -> int:
             result = init_workspace(args.destination, args.template, args.decision_backend)
         elif args.command == "visualize" or (args.command == "study" and args.operation == "visualize"):
             result = visualize(args.project, workspace=args.workspace, variant=args.variant, trial=args.trial,
+                               multi_lab=args.multi_lab,
                                output=args.output, port=args.port, config=getattr(args, "config", "configs/lab.yaml"),
                                design=getattr(args, "design", None), profile=getattr(args, "profile", None),
                                statistics=getattr(args, "statistics", None), **scientist_args(args))
         elif args.command == "study":
             result = study_command(args.project, args.workspace, args.operation,
+                                   multi_lab=getattr(args, "multi_lab", False),
                                    live=getattr(args, "live", False), variant=getattr(args, "variant", None),
                                    **scientist_args(args))
         elif args.command == "designs":

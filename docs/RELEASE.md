@@ -1,4 +1,20 @@
-# Labton 0.2.0 release notes
+# Labton 0.3.0 release notes
+
+An optional multi-lab layer composes the same or different study variants into
+separate labs. The user chooses inter-lab communication (none, low, intermediate,
+high, optional wisdom or wisdom only), a conference or symposium, and the number
+of research sequences. Histories continue by default; an explicit fresh-context
+option remains available. Shared and per-lab budgets include meeting requests.
+
+Initialize with labton init my-labs --template multi-lab, then use prepare, run or
+visualize with --multi-lab. See the [configuration and workflow guide](MULTI_LAB.md).
+Existing study.yaml files and single-lab commands remain compatible; add multi_lab
+only when using this layer. Conferences present findings, while symposia add bounded
+discussion rounds. All contributions obey the same inter-lab filters. Confirmation
+waits until every research sequence and meeting ends, separately for each lab.
+No automatic winner, lab redesign or extra sequence is introduced.
+
+## 0.2.0 service configuration
 
 This release uses configurable service protocols for generation and optional semantic
 decisions. It supplies no provider account, service URL or default model selection.

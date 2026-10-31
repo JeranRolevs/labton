@@ -1,5 +1,11 @@
 # Architecture and implementation scope
 
+The optional multi-lab coordinator composes existing study variants as separate
+labs with their own histories and research backends. Shared request/time and
+concurrency limits cover research and meetings. Filtered cross-lab views are frozen
+at sequence and meeting barriers; protected confirmation waits until every sequence
+and meeting ends. See [multi-lab configuration](docs/MULTI_LAB.md).
+
 ![Labton integrated lab](diagrams/06-integrated-lab.svg)
 
 The user supplies a mission and chooses a Markdown lab design. Configuration resolves

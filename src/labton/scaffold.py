@@ -70,7 +70,7 @@ def _private_panels(path):
 
 
 def init_workspace(destination: Path, template: str = "text", decision_backend: str | None = None) -> dict:
-    if template not in {"text", "memory", "scientist"}:
+    if template not in {"text", "memory", "scientist", "multi-lab"}:
         raise ConfigurationError("Unknown starter template.")
     if decision_backend not in {None, "llm_only", "chat_completions", "typed"}:
         raise ConfigurationError("Choose llm_only, chat_completions or typed for decision routing.")
@@ -117,6 +117,10 @@ def init_workspace(destination: Path, template: str = "text", decision_backend: 
             "scientist continuing three sequences. Select scientist-low or scientist-persistent\n"
             "for other effort levels; persistent also accepts --effort-mode budget.\n"
             "All sequences share the chosen study budgets; initialization starts no research.\n"
+            "For the multi-lab template, edit multi_lab in study.yaml and run\n"
+            "python lab.py prepare --multi-lab, then run --multi-lab --sequences 2.\n"
+            "Select each lab's variant, inter-lab sharing and conference/symposium settings.\n"
+            "python lab.py visualize --multi-lab shows the lab and meeting sequence.\n"
             "Use python lab.py visualize --variant single (or memory-single) to view\n"
             "the process locally with two read-only agents; no model calls are made.\n"
             "Keep private seeds, credentials, generated trials and results out of Git.\n\n"

@@ -1,0 +1,32 @@
+%% Generated from specs.py; 2026-10-31. Current runtime; gray nodes are planned.
+flowchart LR
+    choices["User-selected collection<br/>Lab variants, representatives and N sequences"]
+    lab1["Lab 1 / selected design<br/>Own histories, agents and evidence"]
+    lab2["Lab 2..N / selected designs<br/>Same or different designs; separate context"]
+    sharing["Filtered lab exchange<br/>None / low / intermediate / high<br/>Optional conditional wisdom"]
+    meeting["Conference / symposium<br/>Presentations; optional discussion rounds<br/>Same inter-lab restrictions apply"]
+    budget["Group and per-lab limits<br/>Requests and wall time across all sequences<br/>Bounded labs, requests and experiments"]
+    next["User-selected next sequence<br/>Carry own context + permitted peer views<br/>Stop after the chosen sequence count"]
+    confirm["Per-lab final confirmation<br/>After every sequence and meeting<br/>No confirmation feedback to agents"]
+    out["Lab evidence + proceedings<br/>Retain limits, failures and admitted views"]
+    choices --> lab1
+    choices --> lab2
+    lab1 --> sharing
+    lab2 --> sharing
+    sharing --> meeting
+    meeting --> next
+    budget --> next
+    next -.->|continue within N| lab2
+    next -.-> lab1
+    next -->|all sequences end| confirm
+    confirm --> out
+    classDef artifact fill:#FCFAF4,stroke:#99876F,color:#342F28;
+    class choices,out artifact;
+    classDef llm fill:#E9EEEE,stroke:#5B7580,color:#342F28;
+    class lab1,lab2,meeting llm;
+    classDef code fill:#EDF0E6,stroke:#697957,color:#342F28;
+    class sharing,budget,next,confirm code;
+    classDef evidence fill:#F1EADD,stroke:#93805D,color:#342F28;
+    classDef optional fill:#F6EDDC,stroke:#9A7440,color:#342F28;
+    classDef future fill:#EEEDE8,stroke:#999389,color:#342F28;
+    linkStyle default stroke:#887E6B,stroke-width:1.5px;

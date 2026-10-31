@@ -34,6 +34,9 @@ jobs:
           "${{ runner.temp }}/labton-wheel-venv/bin/python" -m labton init portable-scientist --template scientist
           "${{ runner.temp }}/labton-wheel-venv/bin/python" -m labton --project portable-scientist study prepare --workspace portable-scientist
           "${{ runner.temp }}/labton-wheel-venv/bin/python" -m labton --project portable-scientist visualize --workspace portable-scientist --variant scientist-persistent --sequences 3 --effort-mode budget --output portable-scientist.html
+          "${{ runner.temp }}/labton-wheel-venv/bin/python" -m labton init portable-labs --template multi-lab
+          "${{ runner.temp }}/labton-wheel-venv/bin/python" -m labton --project portable-labs study prepare --workspace portable-labs --multi-lab
+          "${{ runner.temp }}/labton-wheel-venv/bin/python" -m labton --project portable-labs visualize --workspace portable-labs --multi-lab --output portable-labs.html
       - run: |
           cd "${{ runner.temp }}"
           "${{ runner.temp }}/labton-wheel-venv/bin/python" -m labton init portable-specialist --template memory --decision-backend typed

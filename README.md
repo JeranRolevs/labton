@@ -21,7 +21,7 @@ Setup and planning make no provider calls. Starters contain placeholder URLs and
 choose your service and credentials explicitly in study.yaml before a live run.
 [Getting started](docs/GETTING_STARTED.md) and [provider configuration](docs/PROVIDERS.md)
 explain the generation and optional decision protocols. No service account is bundled or preferred.
-See [0.2.0 release notes](docs/RELEASE.md) when updating an existing workspace.
+See [0.3.0 release notes](docs/RELEASE.md) when updating an existing workspace.
 
 ## Choose the lab
 
@@ -43,6 +43,18 @@ count; sequences continue the same context by default and share one overall budg
 
 ```bash
 labton init ../scientist-lab --template scientist
+```
+
+The optional [multi-lab layer](docs/MULTI_LAB.md) runs labs with the same or different
+designs. Choose inter-lab sharing from none through detailed findings or wisdom,
+hold a conference or symposium, and continue for a selected number of sequences.
+Each lab retains its own context and evidence; group and per-lab budgets apply.
+
+```bash
+labton init ../my-labs --template multi-lab
+cd ../my-labs
+python3 lab.py prepare --multi-lab
+python3 lab.py visualize --multi-lab
 ```
 
 ## Watch the process

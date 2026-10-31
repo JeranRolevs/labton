@@ -30,9 +30,9 @@ def digest(value: bytes) -> str:
 
 def resolve_sharing(config: dict, design: dict) -> dict:
     requested = config["communication"]
-    recommended = design["communication"]["recommended"]
     profile = requested["profile"]
     if profile == "preset":
+        recommended = design["communication"]["recommended"]
         detail = recommended["detail"]
         wisdom = recommended["wisdom"]["enabled"]
     else:

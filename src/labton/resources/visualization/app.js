@@ -63,16 +63,16 @@
         : "Workflow dependency step. Completion records execution; evidence status is separate.";
       rows = [["State", stateInfo(statusOf(runtime.node_states[node.id]))[1]], ["Step ID", node.id],
         ["Work type", titleCase(node.kind)], ["Actors", node.actors.join(", ")],
-        ["Dependencies", node.depends_on.join(", ") || "Mission / qualification inputs"], ["Sharing", setup.communication]];
+        ["Dependencies", node.depends_on.join(", ") || "Mission / qualification inputs"], ["Sharing", titleCase(setup.communication)]];
     } else if (actor) {
       const observed = runtime.actors.find(item => item.id === actor.id);
       heading = titleCase(actor.name || actor.id);
       description = titleCase(actor.approach) || "Observed child agent; inherited team permissions and limits apply.";
       rows = [["Actor ID", actor.id], ["Role", titleCase(actor.role || "child")],
         ["State", stateInfo(statusOf(observed?.status || "planned"))[1]], ["Step", observed?.node || "—"],
-        ["Model", setup.model.name], ["Sharing", setup.communication]];
+        ["Model", setup.model.name], ["Sharing", titleCase(setup.communication)]];
     } else {
-      rows = [["Model", setup.model.name], ["Sharing", setup.communication], ["Statistics", titleCase(setup.statistics)],
+      rows = [["Model", setup.model.name], ["Sharing", titleCase(setup.communication)], ["Statistics", titleCase(setup.statistics)],
         ["Decisions", pretty(setup.decision_mode) + (setup.specialist ? " / " + setup.specialist : "")],
         ["Agent limit", setup.resources.max_active_agents], ["Child depth", setup.delegation.max_depth],
         ["Children / agent", setup.delegation.max_children_per_agent]];
@@ -80,6 +80,10 @@
         ["Persistence", titleCase(setup.execution.persistence)], ["Effort mode", pretty(setup.execution.effort_mode)],
         ["Sequences", setup.execution.sequences], ["Passes / sequence", setup.execution.passes_per_sequence ?? "Until allowance"],
         ["Context", pretty(setup.execution.context_policy)]);
+      if (setup.execution?.kind === "multi_lab") rows.push(
+        ["Labs", setup.execution.lab_count], ["Active lab limit", setup.resources.max_active_labs], ["Sequences", setup.execution.sequences],
+        ["Meeting", pretty(setup.execution.meeting)], ["Context", pretty(setup.execution.context_policy)],
+        ...setup.labs.map(lab => [lab.id, `${lab.design} · ${lab.sharing}`]));
     }
     setText("detail-title", heading);
     setText("detail-description", description);
@@ -111,9 +115,10 @@
     return lines.slice(0, 2).map(line => line.length > width ? line.slice(0, width - 1) + "…" : line);
   }
   function renderGraph() {
+    const setup = state.setup, labView = map === "workflow" && setup.execution?.kind === "multi_lab";
     const svg = $("graph"), nodes = graphNodes(), positions = new Map();
-    const actorIds = map === "workflow" ? state.setup.actors.map(actor => actor.id) : nodes.map(node => node.id);
-    const shared = nodes.some(node => node.actors.length !== 1 || !actorIds.includes(node.actors[0]));
+    const actorIds = labView ? setup.labs.map(lab => lab.id) : map === "workflow" ? setup.actors.map(actor => actor.id) : nodes.map(node => node.id);
+    const shared = nodes.some(node => labView ? !actorIds.includes(node.lab) : node.actors.length !== 1 || !actorIds.includes(node.actors[0]));
     const lanes = [...actorIds, ...(shared ? ["system:shared"] : [])];
     const ranks = [...new Set(nodes.map(node => node.rank))].sort((a, b) => a - b);
     const rankBase = Math.min(...ranks), cell = 204, boxWidth = 180, boxHeight = 86, gutter = 174;
@@ -140,16 +145,16 @@
       const name = id === "system:shared" ? "System / shared work" : pretty(id);
       const parts = wrapWords(name, 22);
       parts.forEach((part, line) => svg.append(svgElement("text", {x: 12, y: y + 30 + line * 16, class: "lane-label"}, part)));
-      if (id !== "system:shared") svg.append(svgElement("text", {x: 12, y: y + 70, class: "lane-role"}, titleCase(actor?.role || "child")));
+      if (id !== "system:shared") svg.append(svgElement("text", {x: 12, y: y + 70, class: "lane-role"}, labView ? "LAB / " + setup.labs.find(lab => lab.id === id).variant : titleCase(actor?.role || "child")));
     }
     for (const rank of ranks) {
       const step = nodes.find(node => node.rank === rank && node.sequence);
-      const heading = map === "workflow" ? step ? `SEQ ${step.sequence} / ${step.pass ? "PASS " + step.pass : "BUDGET"}`
+      const heading = map === "workflow" ? step ? setup.execution?.kind === "multi_lab" ? `SEQ ${step.sequence} / ${pretty(step.kind).toUpperCase()}` : `SEQ ${step.sequence} / ${step.pass ? "PASS " + step.pass : "BUDGET"}`
         : `STAGE ${String(rank + 1).padStart(2, "0")}` : rank === 0 ? "COORDINATION" : rank === 1 ? "PRIME AGENTS" : `CHILD LEVEL ${rank - 1}`;
       svg.append(svgElement("text", {x: gutter + (rank - rankBase) * cell, y: 26, class: "rank-label"}, heading));
     }
     for (const node of nodes) {
-      const lane = node.actors.length === 1 && actorIds.includes(node.actors[0]) ? node.actors[0] : "system:shared";
+      const lane = labView && actorIds.includes(node.lab) ? node.lab : !labView && node.actors.length === 1 && actorIds.includes(node.actors[0]) ? node.actors[0] : "system:shared";
       positions.set(node.id, {x: gutter + (node.rank - rankBase) * cell, y: 52 + lanes.indexOf(lane) * 102});
     }
     for (const node of nodes) for (const dependency of node.depends_on) {
@@ -271,6 +276,9 @@
       setText("execution-note", `Sequence ${progress.current_sequence} / ${setup.execution.sequences} · Pass ${progress.current_pass}` +
         (setup.execution.passes_per_sequence ? ` / ${setup.execution.passes_per_sequence}` : " · budget mode"));
     }
+    if (setup.execution?.kind === "multi_lab" && runtime.sequence_progress?.current_sequence) {
+      setText("execution-note", `Sequence ${runtime.sequence_progress.current_sequence} / ${setup.execution.sequences} · ${setup.execution.lab_count} labs · ${pretty(setup.execution.meeting)}`);
+    }
     setText("source-state", disconnected ? "DISCONNECTED" : paused ? "PAUSED" : !boot.api_url ? "SNAPSHOT" : "LOCAL JOURNAL");
     setText("source-note", !boot.api_url ? "Saved observation; live updates disabled" : paused ? "Last received values retained" : "Filtered activity records from the selected run");
     setText("connection", disconnected ? "DISCONNECTED" : paused ? "PAUSED" : boot.api_url ? "CONNECTED" : "OFFLINE FILE");
@@ -298,7 +306,8 @@
 
   function renderSelector() {
     const setup = state.setup, runtime = state.runtime;
-    setText("design-letter", setup.design_letter); setText("design-title", setup.design.name);
+    setText("design-scope", setup.execution?.kind === "multi_lab" ? "Lab collection" : "Lab design");
+    setText("design-letter", setup.execution?.kind === "multi_lab" ? "" : setup.design_letter); setText("design-title", setup.design.name);
     setText("governance", titleCase(setup.design.governance)); setText("snapshot-id", setup.snapshot_id);
     setText("run-hint", runtime.trial_id || (state.trials.length ? "Latest follows runs with this exact configuration snapshot." : "No matching run recorded."));
     if (changed("trial-options", [state.trials, state.selection])) {

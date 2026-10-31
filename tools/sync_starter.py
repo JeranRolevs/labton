@@ -18,11 +18,11 @@ def desired():
                 if folder == "configs" and source.name != "lab.yaml":
                     continue
                 output["project/" + source.relative_to(PROJECT).as_posix()] = source.read_bytes()
-    for name in ("SINGLE_SCIENTIST.md", "PROVIDERS.md", "DECISION_PROVIDERS.md"):
+    for name in ("SINGLE_SCIENTIST.md", "MULTI_LAB.md", "PROVIDERS.md", "DECISION_PROVIDERS.md"):
         guide = PROJECT / "docs" / name
         if guide.is_file():
             output["project/docs/" + name] = guide.read_bytes()
-    for name, example in (("text", "text_workflow"), ("memory", "memory_retention"), ("scientist", "single_scientist")):
+    for name, example in (("text", "text_workflow"), ("memory", "memory_retention"), ("scientist", "single_scientist"), ("multi-lab", "multi_lab")):
         for source in (PROJECT / "examples" / example).rglob("*"):
             if (source.is_file() and source.suffix in {".py", ".yaml", ".md", ".json"}
                     and "__pycache__" not in source.parts
