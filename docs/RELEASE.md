@@ -1,4 +1,19 @@
-# Labton 0.4.0 release notes
+# Labton 0.4.1 release notes
+
+Labton Academic Research License 2.0 limits free independent noncommercial academic research
+to qualifying public or nonprofit educational institutions genuinely based in World Bank
+low-income or lower-middle-income economies and their authorized users. Company labs,
+corporate research proxies and commissioned company work remain excluded. Unrestricted
+donations must meet the licence's conditions. Upper-middle-income, high-income and
+unclassified economies are outside the free permission.
+
+Other use requires a separate written licence from Pioneertown B.V. through Goran Mitevski:
+[goran@pioneertown.ai](mailto:goran@pioneertown.ai).
+Version 2.0 does not purport to revoke or rewrite permissions granted for
+earlier copies. Package metadata, notices and starter workspaces carry the new terms.
+See [LICENSE](../LICENSE) and [the licensing summary](../LICENSING.md).
+
+## 0.4.0 reviewed model-assisted priors
 
 Bayesian binomial analyses can optionally use a decision model to recommend from explicit
 Beta prior candidates. Prior-only evidence goes to the model; independent validation and
@@ -62,11 +77,17 @@ trials and full local Git backups are excluded from the public tree and distribu
 artifacts. Preserve required dependency and licence notices. Run the starter synchronization,
 offline tests, artifact checks and an installed-wheel smoke check before publishing.
 
+Review history, tags and release assets before making the repository public: earlier commits
+contain the broader version 1.0 licence. Updating the current licence does not change those
+historical copies. A fresh public snapshot can avoid newly distributing those earlier
+versions; it does not revoke permissions already granted to earlier recipients.
+
 Setup, tests, package builds, structural plans, visualizations and diagrams make no model
 calls. Live connectivity checks and research runs remain explicit, separately budgeted actions.
 
 ## Licence and attribution
 
-Labton remains under the [Academic Research License](../LICENSE), with unrestricted donations
-allowed only under its stated conditions. Pioneertown B.V. is the copyright holder and
+Labton uses the [Academic Research License 2.0](../LICENSE), with free use limited to qualifying
+institutions in World Bank low-income or lower-middle-income economies and unrestricted
+donations allowed only under its stated conditions. Pioneertown B.V. is the copyright holder and
 licensor; Goran Mitevski is the author. [Full licensing summary](../LICENSING.md).

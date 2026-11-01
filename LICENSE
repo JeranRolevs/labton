@@ -1,5 +1,5 @@
-Labton Academic Research License 1.0
-SPDX-License-Identifier: LicenseRef-Labton-Academic-Research-1.0
+Labton Academic Research License 2.0
+SPDX-License-Identifier: LicenseRef-Labton-Academic-Research-2.0
 
 Copyright (c) 2026 Pioneertown B.V.
 Author: Goran Mitevski.
@@ -14,13 +14,28 @@ and other copyrightable material made available under it (the "Software").
 Identified third-party material remains subject to its own license. Each
 copyright holder grants only the rights that holder has authority to grant.
 
+"Qualifying Economy" means an economy classified as low-income or
+lower-middle-income in the World Bank's official Country and Lending
+Groups income classification in force at the time of use. Economies
+classified as upper-middle-income or high-income, and unclassified
+economies, do not qualify. The classification is published at:
+https://datahelpdesk.worldbank.org/knowledgebase/articles/906519-world-bank-country-and-lending-groups
+The income group, rather than a regional, lending, or other grouping,
+determines eligibility. If the classification or an institution's location
+cannot be established, separate written permission is required.
+
 "Eligible Academic Institution" means a public or nonprofit university,
 college, or comparable educational institution legally recognized by the
 competent educational authority, whose primary mission is education and
 public-interest academic research or research training. Its departments and
 research centers qualify only while genuinely part of, or owned and
 controlled by, that institution and subject to its independent academic
-governance. An organization or unit excluded by section 4 cannot qualify.
+governance. The institution must be legally established and genuinely
+headquartered in a Qualifying Economy, with its principal educational
+and academic-research operations there. A local registration, postal
+address, campus, affiliate, or intermediary does not make an otherwise
+ineligible institution eligible. An organization or unit excluded by
+section 4 cannot qualify.
 
 "Authorized Academic User" means a currently enrolled student, faculty or
 staff member, or formally appointed researcher acting solely on behalf of
@@ -69,6 +84,12 @@ the Software solely for Permitted Academic Research. No license fee is
 payable for these permitted uses. No institution-wide permission for
 other activities, partners, affiliates, or clients is granted.
 
+Eligibility follows the institution and the project, not a user's
+nationality or the location of a computer or general-purpose service.
+An institution outside a Qualifying Economy, and any other ineligible
+user or activity, requires a separate written license before use.
+Contact Goran Mitevski on behalf of Pioneertown B.V. using section 10.
+
 3. Copies, changes, and redistribution
 
 You may share original or modified copies for Permitted Academic Research,
@@ -76,10 +97,11 @@ without charging a license fee for the Software. Every copy or substantial
 portion you share must include this license and retain applicable copyright,
 attribution, and third-party notices. Identify changes you make. Changes to
 the Software that you distribute must be offered under these same terms;
-you may not remove or weaken the institutional-eligibility, academic-research,
-noncommercial, or anti-circumvention restrictions. Recipients obtain rights
-to the original Software directly from its copyright holders only if they
-qualify under this license. Access to a publicly shared copy creates no
+you may not remove or weaken the institutional-eligibility, geographic,
+academic-research, noncommercial, or anti-circumvention restrictions.
+Recipients obtain rights to the original Software directly from its
+copyright holders only if they qualify under this license. Access to a
+publicly shared copy creates no
 permission for an ineligible recipient to use the Software.
 
 4. Excluded organizations, projects, and indirect use
@@ -98,7 +120,10 @@ No rights are granted to the organizations or for the activities below:
     work, or other privileged commercial benefits to a Commercial Entity;
 (d) use through a university account, academic appointment, student,
     contractor, intermediary, affiliate, or shared infrastructure to
-    obtain for an ineligible entity rights it could not obtain directly.
+    obtain for an ineligible entity rights it could not obtain directly;
+(e) an institution that does not meet the geographic requirements in
+    section 1, including use on its behalf through an institution,
+    campus, affiliate, researcher, or intermediary in a Qualifying Economy.
 
 These exclusions apply according to the actual governance, funding, work,
 and beneficiary arrangements. An academic name, nonprofit or charitable
@@ -145,13 +170,18 @@ and data terms still apply.
 6. Continuing eligibility
 
 Institutional and project eligibility must hold throughout each use.
-If your affiliation, governance, funding, project, or beneficiary
-arrangements cease to meet these terms, permission for further use ends.
+This includes the World Bank income classification and the institution's
+genuine headquarters and principal operations. If an economy ceases to
+qualify, free permission for further use ends; a separate written license
+is required to continue. If your affiliation, governance, funding, project,
+or beneficiary arrangements cease to meet these terms, permission for
+further use ends.
 You must be able, on a reasonable request from the relevant copyright
 holders, to substantiate eligibility through reasonable evidence of
-institutional status, academic affiliation, governance, and project funding
-and rights arrangements. No automatic permission for uncertain cases or
-exception based only on an institution's title is granted; obtain separate
+institutional status, geographic eligibility, academic affiliation,
+governance, and project funding and rights arrangements. No automatic
+permission for uncertain cases or exception based only on an institution's
+title is granted; obtain separate
 written permission if you cannot establish eligibility.
 
 7. Research results and other terms
@@ -185,3 +215,26 @@ validating any research or other results. No copyright holder or contributor
 is liable for damages, losses, or claims arising from the Software or its
 use, whether in contract, tort, or otherwise, to the extent the law allows
 that liability to be excluded.
+
+10. Separate permissions and contact
+
+For use outside the free permission in this license, contact the licensor,
+Pioneertown B.V., through Goran Mitevski to request a separate written
+license. This includes institutions in upper-middle-income or high-income
+economies, institutions in unclassified economies, company research labs,
+and other users or activities that do not qualify under this license.
+
+Goran Mitevski
+Pioneertown B.V.
+Email: goran@pioneertown.ai
+
+Sending a request, receiving an acknowledgement, or discussing terms does
+not grant permission. Any separate license must be agreed in writing
+before the proposed use begins.
+
+11. License version
+
+These are version 2.0 terms for Software supplied under this version.
+This version does not purport to revoke or rewrite permissions already
+granted for copies received under an earlier license. An earlier license
+does not grant rights to new material supplied only under version 2.0.

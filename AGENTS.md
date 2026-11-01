@@ -18,8 +18,10 @@ Keep starter resources synchronized with tools/sync_starter.py. All diagrams use
 diagrams/specs.py; regenerate with diagrams/render_flowcharts.py. Local archives, historical
 reviews and audit records are intentionally ignored and must not enter a public export.
 
-Labton uses the Labton Academic Research License 1.0. Free use is limited to qualifying
-academic institutions and their authorized users for independent noncommercial research.
+Labton uses the Labton Academic Research License 2.0. Free use is limited to qualifying
+academic institutions in World Bank low-income or lower-middle-income economies and their
+authorized users for independent noncommercial research. Other use requires separate written
+permission through Goran Mitevski, goran@pioneertown.ai, on behalf of Pioneertown B.V.
 Company labs, corporate research proxies and commissioned company work are excluded.
 Company donations must be unrestricted, without control or privileged research/IP rights.
 Preserve LICENSE and LICENSING.md in distributions and starter workspaces, including the

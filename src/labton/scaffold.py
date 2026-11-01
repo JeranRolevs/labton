@@ -126,10 +126,15 @@ def init_workspace(destination: Path, template: str = "text", decision_backend: 
             "Keep private seeds, credentials, generated trials and results out of Git.\n\n"
             "Labton copyright holder and licensor: Pioneertown B.V. Author: Goran Mitevski.\n"
             "Labton material is licensed for independent noncommercial academic research\n"
-            "at qualifying public or nonprofit educational institutions and by their authorized users.\n"
+            "at qualifying public or nonprofit educational institutions in World Bank low-income\n"
+            "or lower-middle-income economies, and by their authorized users, under the\n"
+            "Labton Academic Research License 2.0.\n"
             "Company labs, corporate research proxies and commissioned company work are excluded.\n"
             "Company donations must be unrestricted, without control or privileged results/IP rights.\n"
-            "Other use requires separate written permission. Read LICENSE and LICENSING.md;\n"
+            "Other use, including by institutions in upper-middle-income or high-income economies,\n"
+            "requires separate written permission before use. Contact Goran Mitevski:\n"
+            "goran@pioneertown.ai.\n"
+            "Read LICENSE and LICENSING.md;\n"
             "your independent research data and outputs are not relicensed merely by using Labton.\n",
             encoding="utf-8")
         # Exclusive destination creation: a concurrent creator cannot be overwritten.

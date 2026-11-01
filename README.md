@@ -4,7 +4,8 @@ De-siloing can create groupthink, while silos can prevent knowledge sharing and 
 research efficiency.
 
 Labton tackles the problem of research and lab design when probabilistic research
-based on LLMs and decision models is used.
+based on LLMs and decision models is used. The goal is to help researchers reach better
+findings by experimenting with lab designs, communication rules and ways of sharing knowledge.
 
 Choose a lab design, configure its communication rules, or connect multiple labs with
 different organizational structures and different levels of information sharing.
@@ -12,8 +13,12 @@ Labton lets you experiment with how research is organized, how agents communicat
 and how knowledge moves through a discovery process.
 
 Labton runs bounded research workflows with a user-selected organization, models,
-communication rules and budgets. Choose one scientist or several complementary agents,
-inspect the process, and retain outputs alongside the evidence needed to assess them.
+communication rules and budgets. Choose to run the lab with one scientist agent or several
+complementary agents acting as scientists, or even set up and combine different labs with
+different communication modes. Inspect the process, and save findings with the available
+supporting records, including data sources, experiment results, statistical checks and run
+settings. These records help others judge which conclusions are supported and which still
+need testing.
 
 **Author:** Goran Mitevski. **Copyright holder and licensor:** Pioneertown B.V.
 
@@ -32,7 +37,7 @@ Setup and planning make no provider calls. Starters contain placeholder URLs and
 choose your service and credentials explicitly in study.yaml before a live run.
 [Getting started](docs/GETTING_STARTED.md) and [provider configuration](docs/PROVIDERS.md)
 explain the generation and optional decision protocols. No service account is bundled or preferred.
-See [0.4.0 release notes](docs/RELEASE.md) when updating an existing workspace.
+See [0.4.1 release notes](docs/RELEASE.md) when updating an existing workspace.
 
 ## Choose the lab
 
@@ -120,7 +125,10 @@ See [architecture](ARCHITECTURE.md), [current scope](docs/SKELETON.md), [flow di
 [execution boundaries](SECURITY.md) and [contributing](CONTRIBUTING.md).
 
 Labton is free to use, modify and share for **noncommercial academic research at qualifying
-public or nonprofit educational institutions** under the [Labton Academic Research License 1.0](LICENSE).
+public or nonprofit educational institutions in World Bank low-income or lower-middle-income
+economies** under the [Labton Academic Research License 2.0](LICENSE).
 Company labs, corporate research proxies and commissioned commercial research are excluded.
 Company support is allowed only as a genuinely unrestricted donation without control or privileged
-research or IP rights. Other use requires separate written permission. See [licensing](LICENSING.md).
+research or IP rights. Institutions in upper-middle-income or high-income economies, and other
+ineligible users or activities, require separate written permission before use. Contact
+Goran Mitevski at [goran@pioneertown.ai](mailto:goran@pioneertown.ai). See [licensing](LICENSING.md).

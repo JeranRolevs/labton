@@ -22,7 +22,10 @@ doctor --live and study run are explicit metered actions.
 
 Lab styles and communication remain user choices. Compare them with repeated matched-budget
 runs; one smoke trial cannot establish a winner. Contributions must be offered under the
-[Labton Academic Research License 1.0](LICENSE); retain applicable notices and identify changes.
+[Labton Academic Research License 2.0](LICENSE); retain applicable notices and identify changes.
+Free permission requires an eligible academic institution in a World Bank low-income or
+lower-middle-income economy. For other use, request separate written permission through
+Goran Mitevski at [goran@pioneertown.ai](mailto:goran@pioneertown.ai); see [licensing](LICENSING.md).
 
 For a release, build wheels and a source distribution and run
 python3 tools/check_release.py --artifacts dist. Keep ignored local archives and audit/review
