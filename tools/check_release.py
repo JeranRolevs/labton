@@ -35,7 +35,8 @@ def check_artifact(path):
         with zipfile.ZipFile(path) as archive:
             names = archive.namelist()
             for name in names:
-                if name.startswith("labton/") and not name.endswith("/"):
+                # Reject every unexpected package namespace, including stale pre-rename files.
+                if "/" in name and not name.split("/", 1)[0].endswith(".dist-info") and not name.endswith("/"):
                     source = ROOT / "src" / name
                     if not source.is_file() or source.is_symlink():
                         violations.append(name + ": not in current package source")

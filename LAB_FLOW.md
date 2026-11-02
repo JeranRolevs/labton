@@ -1,9 +1,9 @@
-# Labton — integrated lab flow
+# Labtune — integrated lab flow
 
 Updated 2026-10-28. This graph shows the current bounded runtime; the general integration
 and asset-registry node is marked planned.
 
-![Integrated Labton workflow](diagrams/06-integrated-lab.svg)
+![Integrated Labtune workflow](diagrams/06-integrated-lab.svg)
 
 [SVG](diagrams/06-integrated-lab.svg) · [PNG](diagrams/06-integrated-lab.png) ·
 [PDF](diagrams/06-integrated-lab.pdf) · [Mermaid](diagrams/06-integrated-lab.mmd)

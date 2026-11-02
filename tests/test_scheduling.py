@@ -2,8 +2,8 @@
 import asyncio
 import unittest
 
-from labton.planning import compile_plan
-from labton.study import StudyError, TextStudy
+from labtune.planning import compile_plan
+from labtune.study import StudyError, TextStudy
 import test_providers as fixtures
 PROJECT,FAKE_KEY=fixtures.PROJECT,fixtures.FAKE_KEY
 
@@ -13,7 +13,7 @@ class GraphTests(unittest.TestCase):
     tearDown=fixtures.StudyTests.tearDown
 
     def make_study(self,width):
-        from labton.study import load_study
+        from labtune.study import load_study
         config=load_study(self.root)
         plan=compile_plan(PROJECT,config_overrides=config["base_overrides"])
         plan["resources"]["max_active_agents"]=width
@@ -59,7 +59,7 @@ class GraphTests(unittest.TestCase):
 
 class OutputLimitTests(unittest.TestCase):
     def test_reasoning_only_truncation_reports_the_output_limit(self):
-        from labton.providers.chat import ChatCompletionsClient,ProviderError
+        from labtune.providers.chat import ChatCompletionsClient,ProviderError
         client=ChatCompletionsClient(FAKE_KEY,model="fixture-chat",base_url="https://generation.example.test/v1",transport=lambda *args: {
             "choices":[{"finish_reason":"length","message":{"content":"","reasoning_content":"fixture"}}]})
         with self.assertRaises(ProviderError) as failure:
@@ -67,7 +67,7 @@ class OutputLimitTests(unittest.TestCase):
         self.assertEqual(failure.exception.kind,"output_limit")
 
     def test_explicit_reasoning_controls_are_sent_only_to_chat(self):
-        from labton.providers.chat import ChatCompletionsClient
+        from labtune.providers.chat import ChatCompletionsClient
         captured=[]
         def transport(method,path,body):
             captured.append(body)
@@ -83,7 +83,7 @@ class ActionFormatTests(unittest.TestCase):
     tearDown=fixtures.StudyTests.tearDown
 
     def study(self,replies):
-        from labton.study import load_study
+        from labtune.study import load_study
         config=load_study(self.root)
         plan=compile_plan(PROJECT,config_overrides=config["base_overrides"])
         study=TextStudy(PROJECT,self.root,config,plan,"format",FAKE_KEY)

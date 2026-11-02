@@ -1,9 +1,9 @@
-# Labton — horizontal lab flow
+# Labtune — horizontal lab flow
 
 Updated 2026-10-28. Current bounded runner and domain execution; general asset integration
 and registry remain planned. Settings stay user-selected.
 
-![Horizontal Labton workflow](diagrams/08-horizontal-lab.svg)
+![Horizontal Labtune workflow](diagrams/08-horizontal-lab.svg)
 
 [SVG](diagrams/08-horizontal-lab.svg) · [PNG](diagrams/08-horizontal-lab.png) ·
 [PDF](diagrams/08-horizontal-lab.pdf) · [Mermaid](diagrams/08-horizontal-lab.mmd)

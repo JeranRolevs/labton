@@ -1,9 +1,9 @@
 # Skeleton configuration
 
 `lab.yaml` is a small user override file. The loader merges it into the packaged
-[defaults.yaml](../src/labton/resources/defaults.yaml), validates the
-[configuration schema](../src/labton/schemas/lab_config.schema.json), and reads the selected
-design's front matter under the [preset schema](../src/labton/schemas/lab_design.schema.json).
+[defaults.yaml](../src/labtune/resources/defaults.yaml), validates the
+[configuration schema](../src/labtune/schemas/lab_config.schema.json), and reads the selected
+design's front matter under the [preset schema](../src/labtune/schemas/lab_design.schema.json).
 
 Effective priority is explicit CLI/user values, preset suggestions for unset design-specific
 settings, then base defaults. Hard structural constraints remain enforced. Unknown fields,

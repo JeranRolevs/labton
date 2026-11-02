@@ -1,6 +1,19 @@
-# Labton 0.4.1 release notes
+# Labtune 0.5.0 release notes
 
-Labton Academic Research License 2.0 limits free independent noncommercial academic research
+The product, repository, Python distribution, import namespace and command are now named
+**Labtune** / `labtune`. Repository links point to
+[JeranRolevs/labtune](https://github.com/JeranRolevs/labtune). The dashboard, diagrams, starter
+workspaces, CI and licence branding use the new name. The licence's eligibility, research,
+funding and company-lab restrictions continue under the renamed licence identifier.
+
+New workspace examples use `LABTUNE_API_KEY` and `LABTUNE_DECISION_API_KEY`. Existing studies
+continue to use the environment-variable names explicitly declared in their configuration.
+Existing workspace launchers need their import updated to `labtune.cli`; the new CLI can
+also operate on an existing workspace directly. See [migration instructions](MIGRATION.md).
+
+## 0.4.1 geographic licensing
+
+Labtune Academic Research License 2.0 limits free independent noncommercial academic research
 to qualifying public or nonprofit educational institutions genuinely based in World Bank
 low-income or lower-middle-income economies and their authorized users. Company labs,
 corporate research proxies and commissioned company work remain excluded. Unrestricted
@@ -36,7 +49,7 @@ high, optional wisdom or wisdom only), a conference or symposium, and the number
 of research sequences. Histories continue by default; an explicit fresh-context
 option remains available. Shared and per-lab budgets include meeting requests.
 
-Initialize with labton init my-labs --template multi-lab, then use prepare, run or
+Initialize with labtune init my-labs --template multi-lab, then use prepare, run or
 visualize with --multi-lab. See the [configuration and workflow guide](MULTI_LAB.md).
 Existing study.yaml files and single-lab commands remain compatible; add multi_lab
 only when using this layer. Conferences present findings, while symposia add bounded
@@ -87,7 +100,7 @@ calls. Live connectivity checks and research runs remain explicit, separately bu
 
 ## Licence and attribution
 
-Labton uses the [Academic Research License 2.0](../LICENSE), with free use limited to qualifying
+Labtune uses the [Academic Research License 2.0](../LICENSE), with free use limited to qualifying
 institutions in World Bank low-income or lower-middle-income economies and unrestricted
 donations allowed only under its stated conditions. Pioneertown B.V. is the copyright holder and
 licensor; Goran Mitevski is the author. [Full licensing summary](../LICENSING.md).

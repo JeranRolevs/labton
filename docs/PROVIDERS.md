@@ -1,6 +1,6 @@
 # Configure a provider
 
-Labton connects to services by a declared JSON protocol. It includes a chat-completions
+Labtune connects to services by a declared JSON protocol. It includes a chat-completions
 adapter for generation and chat-completions or typed-JSON adapters for optional decisions.
 The user chooses the service, account, model and request options; there are no bundled accounts,
 service defaults or automatic model choices. Other protocols require a registered adapter.
@@ -16,7 +16,7 @@ provider:
   endpoint: /chat/completions
   models_endpoint: null
   model: your-model-id
-  api_key_env: LABTON_API_KEY
+  api_key_env: LABTUNE_API_KEY
   env_file: .env
   timeout_seconds: 90
   max_output_tokens: 8192
@@ -38,7 +38,7 @@ explicit loopback URLs such as http://127.0.0.1:8000/v1. Redirects are not follo
 Set the named environment variable or put it in the workspace's ignored .env file:
 
 ```text
-LABTON_API_KEY=replace-with-your-private-key
+LABTUNE_API_KEY=replace-with-your-private-key
 ```
 
 Never put raw keys in study.yaml. For an endpoint that explicitly needs no authentication,

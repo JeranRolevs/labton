@@ -14,10 +14,10 @@ statistics:
   approach: frequentist  # frequentist | bayesian
 ```
 
-Or inspect an override from the Labton directory:
+Or inspect an override from the Labtune directory:
 
 ```bash
-labton --project . plan --statistics bayesian
+labtune --project . plan --statistics bayesian
 ```
 
 The editable example/default is `frequentist`; it is not a claim of superiority. Each plan

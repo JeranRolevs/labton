@@ -3,13 +3,13 @@ requires = ["setuptools>=77", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "labton"
-version = "0.4.1"
+name = "labtune"
+version = "0.5.0"
 description = "Configurable multi-agent discovery labs with optional decision specialists"
 authors = [{name = "Goran Mitevski"}]
 readme = "README.md"
 requires-python = ">=3.11"
-license = "LicenseRef-Labton-Academic-Research-2.0"
+license = "LicenseRef-Labtune-Academic-Research-2.0"
 license-files = ["LICENSE", "LICENSING.md"]
 dependencies = ["PyYAML>=6,<7", "jsonschema>=4,<5"]
 classifiers = [
@@ -19,9 +19,9 @@ classifiers = [
 ]
 
 [project.urls]
-Repository = "https://github.com/JeranRolevs/labton"
-Issues = "https://github.com/JeranRolevs/labton/issues"
-License = "https://github.com/JeranRolevs/labton/blob/main/LICENSE"
+Repository = "https://github.com/JeranRolevs/labtune"
+Issues = "https://github.com/JeranRolevs/labtune/issues"
+License = "https://github.com/JeranRolevs/labtune/blob/main/LICENSE"
 
 [project.optional-dependencies]
 bayesian = ["scipy>=1.10"]
@@ -29,13 +29,13 @@ memory = ["numpy>=1.24", "scipy>=1.10", "psutil>=5.9"]
 diagrams = ["matplotlib>=3.6", "Pillow>=9"]
 
 [project.scripts]
-labton = "labton.cli:main"
+labtune = "labtune.cli:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]
-include = ["labton*"]
+include = ["labtune*"]
 namespaces = false
 
 [tool.setuptools.package-data]
-"labton.schemas" = ["*.json"]
-"labton.resources" = ["*.yaml", "starter/**/*", "visualization/*"]
+"labtune.schemas" = ["*.json"]
+"labtune.resources" = ["*.yaml", "starter/**/*", "visualization/*"]

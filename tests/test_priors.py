@@ -9,12 +9,12 @@ import tempfile
 import unittest
 from unittest.mock import patch
 
-from labton.cli import main
-from labton.config import ConfigurationError
-from labton.prior_math import posterior_sensitivity
-from labton.priors import (PriorError, apply_priors, approve, check_protocol, load_approved,
+from labtune.cli import main
+from labtune.config import ConfigurationError
+from labtune.prior_math import posterior_sensitivity
+from labtune.priors import (PriorError, apply_priors, approve, check_protocol, load_approved,
                            runtime_priors, suggest, verify_frozen_files, write_record)
-from labton.study import plans, run_variant
+from labtune.study import plans, run_variant
 import test_providers as fixtures
 
 
@@ -71,7 +71,7 @@ class PriorTests(unittest.TestCase):
         return path, load_approved(self.root, path)
 
     def test_independent_evidence_checks_are_explicit_not_approval(self):
-        with patch("labton.decisions.decision_client_for", side_effect=AssertionError("Offline")):
+        with patch("labtune.decisions.decision_client_for", side_effect=AssertionError("Offline")):
             report = check_protocol(self.root, self.protocol_file)
         self.assertEqual(report["status"], "checked_not_approved")
         self.assertEqual(set(report["eligible_candidates"]), {"broad", "cautious", "stronger"})
@@ -202,7 +202,7 @@ class PriorTests(unittest.TestCase):
                     {"choice": "cautious", "confidence": .99,
                      "probabilities": {"broad": .01, "cautious": .98, "stronger": .01}}},
                     "usage": {"input_tokens": 9, "output_tokens": 2}}
-        with patch("labton.study.api_key", return_value=fixtures.FAKE_KEY):
+        with patch("labtune.study.api_key", return_value=fixtures.FAKE_KEY):
             proposal = asyncio.run(suggest(self.root, self.protocol_file, self.config, "a-none", "specialist",
                                           live=True, transport=transport))
         self.assertEqual(len(bodies), 1)
@@ -223,7 +223,7 @@ class PriorTests(unittest.TestCase):
         self.assertEqual(approved["proposal"]["recommended_candidate"], "cautious")
 
     def test_explicit_live_and_bayesian_selection_are_required_without_requests(self):
-        with patch("labton.decisions.decision_client_for", side_effect=AssertionError("No request")):
+        with patch("labtune.decisions.decision_client_for", side_effect=AssertionError("No request")):
             with self.assertRaises(PriorError):
                 asyncio.run(suggest(self.root, self.protocol_file, self.config, "a-none", "specialist"))
             self.config["base_overrides"]["statistics"]["approach"] = "frequentist"
@@ -242,7 +242,7 @@ class PriorTests(unittest.TestCase):
         (self.root / "mission/problem.md").write_text("An actual research mission")
         self.write("study.yaml", self.config)
         (self.root / "prior.md").write_text("Changed prior evidence")
-        with patch("labton.study.api_key", side_effect=AssertionError("No credentials/provider before preflight")):
+        with patch("labtune.study.api_key", side_effect=AssertionError("No credentials/provider before preflight")):
             with self.assertRaises(PriorError):
                 asyncio.run(run_variant(fixtures.PROJECT, self.root, "a-none"))
         self.assertFalse((self.root / "trials").exists())
@@ -285,7 +285,7 @@ class PriorTests(unittest.TestCase):
         self.write("setup/priors/existing.json", {"do_not_overwrite": True})
         errors = io.StringIO()
         with redirect_stdout(io.StringIO()), redirect_stderr(errors), patch(
-            "labton.priors.suggest", side_effect=AssertionError("No provider request for invalid output")
+            "labtune.priors.suggest", side_effect=AssertionError("No provider request for invalid output")
         ):
             status = main(["priors", "suggest", "--workspace", str(self.root), "--protocol", self.protocol_file,
                            "--variant", "a-none", "--provider", "specialist", "--live",
@@ -294,7 +294,7 @@ class PriorTests(unittest.TestCase):
         self.assertIn("cannot be overwritten", errors.getvalue())
 
     def test_labs_bind_separate_reviewed_priors_without_pooling(self):
-        from labton.multi_lab import compile_multi_lab
+        from labtune.multi_lab import compile_multi_lab
         from test_multi_lab import config_for_tests
         path, record = self.approved()
         other_approval = approve(self.root, self.protocol_file, "broad", "Reviewer", "Compare a weaker prior",

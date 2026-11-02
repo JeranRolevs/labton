@@ -6,7 +6,7 @@ import os
 from pathlib import Path
 import tempfile
 
-os.environ.setdefault("MPLCONFIGDIR", str(Path(tempfile.gettempdir()) / "labton-mpl"))
+os.environ.setdefault("MPLCONFIGDIR", str(Path(tempfile.gettempdir()) / "labtune-mpl"))
 from specs import COLORS, DATE, STYLE, diagrams
 
 OUT = Path(__file__).resolve().parent
@@ -42,7 +42,7 @@ def render(g):
     fig,ax=plt.subplots(figsize=(width,height),facecolor=STYLE["background"])
     fig.subplots_adjust(left=0,right=1,bottom=0,top=1)
     ax.set(xlim=(0,width),ylim=(height,0));ax.axis("off")
-    ax.text(.6,.45,"LABTON / "+g["stem"][:2],fontsize=11,color=STYLE["accent"],weight="bold",fontfamily=STYLE["display_font"],va="center")
+    ax.text(.6,.45,"LABTUNE / "+g["stem"][:2],fontsize=11,color=STYLE["accent"],weight="bold",fontfamily=STYLE["display_font"],va="center")
     ax.text(width-.6,.45,DATE+" · CURRENT BOUNDED RUNTIME",fontsize=10,color=STYLE["secondary"],ha="right",va="center")
     for y in (.7,.75):
         ax.plot([.6,width-.6],[y,y],color=STYLE["accent"],linewidth=.5)
@@ -84,7 +84,7 @@ def render(g):
     ax.text(.6,height-.47,g["footer"],fontsize=10.5,color=STYLE["secondary"],va="center")
     for suffix in ("svg","png","pdf"):
         fig.savefig(OUT/(g["stem"]+"."+suffix),dpi=130,facecolor=STYLE["background"],
-                    metadata={"Creator":"Labton diagram renderer"})
+                    metadata={"Creator":"Labtune diagram renderer"})
     plt.close(fig)
 
 

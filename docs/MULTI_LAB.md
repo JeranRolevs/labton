@@ -9,7 +9,7 @@ There is no automatic lab selection, redesign, ranking or extra sequence.
 ## Start and inspect
 
 ```sh
-labton init my-labs --template multi-lab
+labtune init my-labs --template multi-lab
 cd my-labs
 python3 lab.py prepare --multi-lab
 python3 lab.py visualize --multi-lab

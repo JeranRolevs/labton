@@ -1,18 +1,18 @@
-# Labton <> configurable probablistic discovery labs
+# Labtune <> configurable probablistic discovery labs
 
 De-siloing can create groupthink, while silos can prevent knowledge sharing and reduce
 research efficiency.
 
-Labton tackles the problem of research and lab design when probabilistic research
+Labtune tackles the problem of research and lab design when probabilistic research
 based on LLMs and decision models is used. The goal is to help researchers reach better
 findings by experimenting with lab designs, communication rules and ways of sharing knowledge.
 
 Choose a lab design, configure its communication rules, or connect multiple labs with
 different organizational structures and different levels of information sharing.
-Labton lets you experiment with how research is organized, how agents communicate,
+Labtune lets you experiment with how research is organized, how agents communicate,
 and how knowledge moves through a discovery process.
 
-Labton runs bounded research workflows with a user-selected organization, models,
+Labtune runs bounded research workflows with a user-selected organization, models,
 communication rules and budgets. Choose to run the lab with one scientist agent or several
 complementary agents acting as scientists, or even set up and combine different labs with
 different communication modes. Inspect the process, and save findings with the available
@@ -28,7 +28,7 @@ Python 3.11+ is required. From the repository root:
 
 ```bash
 python3 -m pip install -e .
-labton init ../my-lab
+labtune init ../my-lab
 cd ../my-lab
 python3 lab.py prepare
 ```
@@ -37,7 +37,8 @@ Setup and planning make no provider calls. Starters contain placeholder URLs and
 choose your service and credentials explicitly in study.yaml before a live run.
 [Getting started](docs/GETTING_STARTED.md) and [provider configuration](docs/PROVIDERS.md)
 explain the generation and optional decision protocols. No service account is bundled or preferred.
-See [0.4.1 release notes](docs/RELEASE.md) when updating an existing workspace.
+See [0.5.0 release notes](docs/RELEASE.md) and the [migration guide](docs/MIGRATION.md)
+when updating an existing workspace.
 
 ## Choose the lab
 
@@ -58,7 +59,7 @@ The [single scientist](docs/SINGLE_SCIENTIST.md) supports low, medium and persis
 count; sequences continue the same context by default and share one overall budget.
 
 ```bash
-labton init ../scientist-lab --template scientist
+labtune init ../scientist-lab --template scientist
 ```
 
 The optional [multi-lab layer](docs/MULTI_LAB.md) runs labs with the same or different
@@ -67,7 +68,7 @@ hold a conference or symposium, and continue for a selected number of sequences.
 Each lab retains its own context and evidence; group and per-lab budgets apply.
 
 ```bash
-labton init ../my-labs --template multi-lab
+labtune init ../my-labs --template multi-lab
 cd ../my-labs
 python3 lab.py prepare --multi-lab
 python3 lab.py visualize --multi-lab
@@ -101,7 +102,7 @@ unevaluated proposals; they do not establish scientific correctness.
 
 ```bash
 python3 -m pip install -e '.[memory]'
-labton init ../memory-lab --template memory
+labtune init ../memory-lab --template memory
 ```
 
 One generation model can fill every role. Optional decisions use the same model or a separate
@@ -124,9 +125,9 @@ this release. No benchmark winner or automatic quality improvement is claimed.
 See [architecture](ARCHITECTURE.md), [current scope](docs/SKELETON.md), [flow diagrams](FLOWCHARTS.md),
 [execution boundaries](SECURITY.md) and [contributing](CONTRIBUTING.md).
 
-Labton is free to use, modify and share for **noncommercial academic research at qualifying
+Labtune is free to use, modify and share for **noncommercial academic research at qualifying
 public or nonprofit educational institutions in World Bank low-income or lower-middle-income
-economies** under the [Labton Academic Research License 2.0](LICENSE).
+economies** under the [Labtune Academic Research License 2.0](LICENSE).
 Company labs, corporate research proxies and commissioned commercial research are excluded.
 Company support is allowed only as a genuinely unrestricted donation without control or privileged
 research or IP rights. Institutions in upper-middle-income or high-income economies, and other

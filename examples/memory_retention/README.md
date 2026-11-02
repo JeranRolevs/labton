@@ -7,7 +7,7 @@ optional decision endpoints and budgets. No model account or live call is part o
 
 ```bash
 python3 -m pip install -e '.[memory]'
-labton init ../memory-lab --template memory
+labtune init ../memory-lab --template memory
 cd ../memory-lab
 python3 lab.py prepare
 python3 lab.py qualify

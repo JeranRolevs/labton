@@ -1,6 +1,6 @@
 include README.md AGENTS.md LICENSE LICENSING.md
-recursive-include src/labton/resources *.yaml *.json *.md *.py *.html *.css *.js
-recursive-include src/labton/schemas *.json
+recursive-include src/labtune/resources *.yaml *.json *.md *.py *.html *.css *.js
+recursive-include src/labtune/schemas *.json
 recursive-include lab_designs *.md
 recursive-include configs *.yaml *.md
 recursive-include prompts *.md

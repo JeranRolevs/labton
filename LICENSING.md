@@ -1,10 +1,10 @@
-# Labton licensing
+# Labtune licensing
 
-Labton uses the **Labton Academic Research License 2.0**, a custom licence.
+Labtune uses the **Labtune Academic Research License 2.0**, a custom licence.
 The full terms in [LICENSE](LICENSE) govern; this page is a summary.
 
 **Copyright holder, licensor and owner of the licence text:** Pioneertown B.V.
-**Author of Labton:** Goran Mitevski.
+**Author of Labtune:** Goran Mitevski.
 
 - **Eligible institutions:** legally recognized public or nonprofit universities, colleges
   and comparable educational institutions with an education and academic-research or research-training
@@ -15,7 +15,7 @@ The full terms in [LICENSE](LICENSE) govern; this page is a summary.
 - **Eligible people:** current students, faculty, staff and formally appointed researchers,
   acting for that institution's permitted research. An academic account or appointment does
   not authorize work for a company, another employer or a client.
-- **Free activity:** use, study, run, modify and share Labton for independent noncommercial
+- **Free activity:** use, study, run, modify and share Labtune for independent noncommercial
   academic research, including research training, experiments and replication. Retain the
   licence and notices, identify changes, and distribute changes under the same terms.
 - **Excluded:** company labs, commercial consultancies, startups and spinouts, including
@@ -62,7 +62,7 @@ are subject to the same conditions. A donation cannot make a corporate research 
 Ordinary donor acknowledgement is allowed. Ordinary academic salaries and public or independent
 charitable research grants do not alone make eligible research commercial. Purchasing general
 cloud computing, model APIs or technical services is also allowed for the institution's own
-research; the supplier gains no independent right to use Labton as its research tool.
+research; the supplier gains no independent right to use Labtune as its research tool.
 
 | Example | Under this licence |
 |---|---|
@@ -72,12 +72,12 @@ research; the supplier gains no independent right to use Labton as its research 
 | A university project gives a sponsor first access to results or an IP licence option | Separate written permission required |
 | A company-controlled nonprofit operates a lab on a university campus | Excluded; separate written permission required |
 | A company lab publishes all its findings openly | Excluded; publication does not change institutional eligibility |
-| A university-owned commercial spinout uses Labton | Excluded; separate written permission required |
+| A university-owned commercial spinout uses Labtune | Excluded; separate written permission required |
 
 ## Results, copies and continuing eligibility
 
-Research findings and independently created outputs do not become subject to Labton's
-licence merely because Labton was used. Copies or adaptations of Labton's own material
+Research findings and independently created outputs do not become subject to Labtune's
+licence merely because Labtune was used. Copies or adaptations of Labtune's own material
 retain its terms. The licence does not pay model-provider fees or change the terms of
 dependencies, datasets or external services. Third-party components retain their own licences.
 
@@ -88,7 +88,7 @@ evidence if requested by the relevant copyright holders. Changes in country clas
 location, governance, affiliation, funding or sponsor rights can end permission for further use.
 
 The licence is included in source distributions, wheels and newly initialized workspaces.
-Its package identifier, `LicenseRef-Labton-Academic-Research-2.0`, identifies these custom
+Its package identifier, `LicenseRef-Labtune-Academic-Research-2.0`, identifies these custom
 academic and geographic eligibility terms. Version 2.0 applies to copies supplied under it;
 it does not purport to revoke or rewrite permissions granted for earlier copies. Earlier
 licences do not grant rights to new material supplied only under version 2.0.
@@ -103,4 +103,4 @@ Email: [goran@pioneertown.ai](mailto:goran@pioneertown.ai).
 
 A request or acknowledgement does not itself grant a licence or promise any particular terms.
 
-Third-party components remain subject to their own licences; this licence grants only rights in Labton material.
+Third-party components remain subject to their own licences; this licence grants only rights in Labtune material.

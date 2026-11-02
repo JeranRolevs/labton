@@ -1,6 +1,6 @@
 # Contributing
 
-Work from this repository root, the independent Labton Python package. Python 3.11+ is required.
+Work from this repository root, the independent Labtune Python package. Python 3.11+ is required.
 
 ```bash
 python3 -m pip install -e '.[memory,diagrams]'
@@ -12,7 +12,7 @@ python3 tools/check_release.py
 ```
 
 Edit canonical examples and templates, then run sync_starter.py without --check. Its output
-under src/labton/resources/starter/ is generated package data. Test a built wheel from outside
+under src/labtune/resources/starter/ is generated package data. Test a built wheel from outside
 the checkout; editable-install success alone does not establish a portable release.
 
 Do not copy the legacy parent implementation, upstream source/prompts/templates, or local
@@ -22,7 +22,7 @@ doctor --live and study run are explicit metered actions.
 
 Lab styles and communication remain user choices. Compare them with repeated matched-budget
 runs; one smoke trial cannot establish a winner. Contributions must be offered under the
-[Labton Academic Research License 2.0](LICENSE); retain applicable notices and identify changes.
+[Labtune Academic Research License 2.0](LICENSE); retain applicable notices and identify changes.
 Free permission requires an eligible academic institution in a World Bank low-income or
 lower-middle-income economy. For other use, request separate written permission through
 Goran Mitevski at [goran@pioneertown.ai](mailto:goran@pioneertown.ai); see [licensing](LICENSING.md).

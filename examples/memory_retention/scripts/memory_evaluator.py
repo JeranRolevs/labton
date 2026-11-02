@@ -50,7 +50,7 @@ def main():
     started=time.monotonic()
     operation=request["operation"]
     prior=None
-    # Reviewed priors are applied by Labton to the measured counts, with a sensitivity report.
+    # Reviewed priors are applied by Labtune to the measured counts, with a sensitivity report.
     # The legacy, explicitly configured manual prior remains a separate mode.
     if request.get("statistical_approach")=="bayesian" and not request.get("reviewed_prior_analysis"):
         prior=protocol.get("bayesian_prior")

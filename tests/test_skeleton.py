@@ -14,9 +14,9 @@ import sys
 import tempfile
 import unittest
 
-from labton.config import ConfigurationError, load_config, parse_yaml, project_file, validate
-from labton.cli import main
-from labton.planning import catalogue, compile_plan
+from labtune.config import ConfigurationError, load_config, parse_yaml, project_file, validate
+from labtune.cli import main
+from labtune.planning import catalogue, compile_plan
 
 PROJECT = Path(__file__).resolve().parents[1]
 
@@ -177,7 +177,7 @@ class SkeletonContracts(unittest.TestCase):
                 "private_splits.json", "local-reference", "archive", "CODE_PROVENANCE_AUDIT.md",
                 "provenance_audit.json", "RELATED_WORK_REVIEW.md", "REVIEW.md", "PLAN.md", "idea_flow.md"))
             env = dict(os.environ, PYTHONPATH=str(copy / "src"), PYTHONDONTWRITEBYTECODE="1")
-            result = subprocess.run([sys.executable, "-m", "labton", "--project", str(copy), "check"],
+            result = subprocess.run([sys.executable, "-m", "labtune", "--project", str(copy), "check"],
                                     cwd=directory, env=env, capture_output=True, text=True)
             self.assertEqual(result.returncode, 0, result.stderr)
             self.assertEqual(json.loads(result.stdout)["presets"], 6)

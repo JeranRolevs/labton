@@ -6,7 +6,7 @@ concurrency limits cover research and meetings. Filtered cross-lab views are fro
 at sequence and meeting barriers; protected confirmation waits until every sequence
 and meeting ends. See [multi-lab configuration](docs/MULTI_LAB.md).
 
-![Labton integrated lab](diagrams/06-integrated-lab.svg)
+![Labtune integrated lab](diagrams/06-integrated-lab.svg)
 
 The user supplies a mission and chooses a Markdown lab design. Configuration resolves
 personas, phases, sharing, statistics and budgets. Ready dependency waves can run concurrently;

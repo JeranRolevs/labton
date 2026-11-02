@@ -5,7 +5,7 @@ import shutil
 import sys
 
 PROJECT = Path(__file__).resolve().parents[1]
-TARGET = PROJECT / "src/labton/resources/starter"
+TARGET = PROJECT / "src/labtune/resources/starter"
 
 
 def desired():
@@ -18,7 +18,7 @@ def desired():
                 if folder == "configs" and source.name != "lab.yaml":
                     continue
                 output["project/" + source.relative_to(PROJECT).as_posix()] = source.read_bytes()
-    for name in ("SINGLE_SCIENTIST.md", "MULTI_LAB.md", "PROVIDERS.md", "DECISION_PROVIDERS.md", "BAYESIAN_PRIORS.md"):
+    for name in ("SINGLE_SCIENTIST.md", "MULTI_LAB.md", "PROVIDERS.md", "DECISION_PROVIDERS.md", "BAYESIAN_PRIORS.md", "MIGRATION.md"):
         guide = PROJECT / "docs" / name
         if guide.is_file():
             output["project/docs/" + name] = guide.read_bytes()

@@ -1,13 +1,13 @@
 # Reviewed, model-assisted Bayesian priors
 
 When the user chooses Bayesian analysis, a named decision model can **recommend a prior**.
-It cannot approve it. Labton checks declared evidence separation and numerical implications,
+It cannot approve it. Labtune checks declared evidence separation and numerical implications,
 then requires an explicit user review before the scientific adapter uses the prior.
 The initial executable implementation covers **Beta priors for binomial rates**. It does not
 generate priors for arbitrary likelihoods. The same workflow works with either generic
 decision adapter; it does not require a particular service or change the lab's other models.
 
-Install `labton[bayesian]` for the local SciPy calculations (`labton[memory]` also supplies SciPy).
+Install `labtune[bayesian]` for the local SciPy calculations (`labtune[memory]` also supplies SciPy).
 Copy [the draft protocol](../templates/statistics/prior-elicitation.yaml) into
 `setup/priors/protocol.yaml` in your workspace and fill it with actual evidence and assumptions.
 Setup, planning, checks and approval make no model requests. Proposals, approvals and evidence
@@ -43,7 +43,7 @@ in a model's training data. Passing checks does not establish correctness.
 
 Never use the current research outputs, their summaries or a previous posterior as independent
 prior evidence for the same likelihood observations. If prior and likelihood evidence overlap,
-either remove the overlap or design a supported joint likelihood/hierarchical analysis; Labton
+either remove the overlap or design a supported joint likelihood/hierarchical analysis; Labtune
 does not silently discount or reuse the evidence. Validation observations used to assess or
 select a prior are also excluded from the subsequent likelihood.
 
@@ -57,14 +57,14 @@ the smaller of the provider timeout and the selected wall-time cap, and no retri
 This is a separate, explicit elicitation budget; it is not taken silently from a research run.
 
 ```bash
-labton priors check --workspace /path/to/lab --protocol setup/priors/protocol.yaml
+labtune priors check --workspace /path/to/lab --protocol setup/priors/protocol.yaml
 
 # Optional: one paid request to the explicitly selected provider.
-labton priors suggest --workspace /path/to/lab --protocol setup/priors/protocol.yaml \
+labtune priors suggest --workspace /path/to/lab --protocol setup/priors/protocol.yaml \
   --variant single --provider specialist --live --max-wall-seconds 30 \
   --output setup/priors/proposal-1.json
 
-labton priors approve --workspace /path/to/lab --protocol setup/priors/protocol.yaml \
+labtune priors approve --workspace /path/to/lab --protocol setup/priors/protocol.yaml \
   --candidate cautious --reviewer "Researcher name" \
   --rationale "Explain evidence relevance, independence and the chosen assumptions" \
   --evidence-reviewed --proposal setup/priors/proposal-1.json \
@@ -119,7 +119,7 @@ a prior from a different parameter. Other adapters reject this option until they
 Each measured primary result reports the selected posterior and all declared alternatives:
 Beta(`a + successes`, `b + trials - successes`), posterior means and 95% credible intervals,
 probability above the user-declared rate threshold, and whether the declared probability criterion
-is met. Labton flags a sensitivity result when decisions differ or the posterior mean range
+is met. Labtune flags a sensitivity result when decisions differ or the posterior mean range
 exceeds the declared material shift. Each fit uses the counts **once** with its original prior;
 fits are separate, with no pooling of alternative posteriors or accumulation across sequences.
 No extra experiments or provider requests are needed. With zero trials, results are explicitly

@@ -1,4 +1,4 @@
-name: Labton offline checks
+name: Labtune offline checks
 on: [push, pull_request, workflow_dispatch]
 permissions:
   contents: read
@@ -21,42 +21,42 @@ jobs:
       - run: python -m unittest discover -s examples/memory_retention/tests -v
       - run: python -m pip wheel --no-deps . --wheel-dir dist
       - run: python tools/check_release.py --artifacts dist
-      - run: python -m venv --system-site-packages "${{ runner.temp }}/labton-wheel-venv"
-      - run: '"${{ runner.temp }}/labton-wheel-venv/bin/python" -m pip install --force-reinstall --no-deps dist/*.whl'
+      - run: python -m venv --system-site-packages "${{ runner.temp }}/labtune-wheel-venv"
+      - run: '"${{ runner.temp }}/labtune-wheel-venv/bin/python" -m pip install --force-reinstall --no-deps dist/*.whl'
       - run: |
           cd "${{ runner.temp }}"
-          "${{ runner.temp }}/labton-wheel-venv/bin/python" -m labton init portable-text
-          "${{ runner.temp }}/labton-wheel-venv/bin/python" -m labton --project portable-text check
-          "${{ runner.temp }}/labton-wheel-venv/bin/python" -m labton --project portable-text study prepare --workspace portable-text
-          "${{ runner.temp }}/labton-wheel-venv/bin/python" -m labton init portable-memory --template memory
-          "${{ runner.temp }}/labton-wheel-venv/bin/python" -m labton --project portable-memory study prepare --workspace portable-memory
-          "${{ runner.temp }}/labton-wheel-venv/bin/python" -m labton --project portable-text visualize --workspace portable-text --variant single --output portable-view.html
-          "${{ runner.temp }}/labton-wheel-venv/bin/python" -m labton init portable-scientist --template scientist
-          "${{ runner.temp }}/labton-wheel-venv/bin/python" -m labton --project portable-scientist study prepare --workspace portable-scientist
-          "${{ runner.temp }}/labton-wheel-venv/bin/python" -m labton --project portable-scientist visualize --workspace portable-scientist --variant scientist-persistent --sequences 3 --effort-mode budget --output portable-scientist.html
-          "${{ runner.temp }}/labton-wheel-venv/bin/python" -m labton init portable-labs --template multi-lab
-          "${{ runner.temp }}/labton-wheel-venv/bin/python" -m labton --project portable-labs study prepare --workspace portable-labs --multi-lab
-          "${{ runner.temp }}/labton-wheel-venv/bin/python" -m labton --project portable-labs visualize --workspace portable-labs --multi-lab --output portable-labs.html
+          "${{ runner.temp }}/labtune-wheel-venv/bin/python" -m labtune init portable-text
+          "${{ runner.temp }}/labtune-wheel-venv/bin/python" -m labtune --project portable-text check
+          "${{ runner.temp }}/labtune-wheel-venv/bin/python" -m labtune --project portable-text study prepare --workspace portable-text
+          "${{ runner.temp }}/labtune-wheel-venv/bin/python" -m labtune init portable-memory --template memory
+          "${{ runner.temp }}/labtune-wheel-venv/bin/python" -m labtune --project portable-memory study prepare --workspace portable-memory
+          "${{ runner.temp }}/labtune-wheel-venv/bin/python" -m labtune --project portable-text visualize --workspace portable-text --variant single --output portable-view.html
+          "${{ runner.temp }}/labtune-wheel-venv/bin/python" -m labtune init portable-scientist --template scientist
+          "${{ runner.temp }}/labtune-wheel-venv/bin/python" -m labtune --project portable-scientist study prepare --workspace portable-scientist
+          "${{ runner.temp }}/labtune-wheel-venv/bin/python" -m labtune --project portable-scientist visualize --workspace portable-scientist --variant scientist-persistent --sequences 3 --effort-mode budget --output portable-scientist.html
+          "${{ runner.temp }}/labtune-wheel-venv/bin/python" -m labtune init portable-labs --template multi-lab
+          "${{ runner.temp }}/labtune-wheel-venv/bin/python" -m labtune --project portable-labs study prepare --workspace portable-labs --multi-lab
+          "${{ runner.temp }}/labtune-wheel-venv/bin/python" -m labtune --project portable-labs visualize --workspace portable-labs --multi-lab --output portable-labs.html
       - run: |
           cd "${{ runner.temp }}"
-          "${{ runner.temp }}/labton-wheel-venv/bin/python" -m labton init portable-specialist --template memory --decision-backend typed
-          "${{ runner.temp }}/labton-wheel-venv/bin/python" -m labton --project portable-specialist study prepare --workspace portable-specialist
+          "${{ runner.temp }}/labtune-wheel-venv/bin/python" -m labtune init portable-specialist --template memory --decision-backend typed
+          "${{ runner.temp }}/labtune-wheel-venv/bin/python" -m labtune --project portable-specialist study prepare --workspace portable-specialist
       - if: runner.os == 'macOS'
         name: Qualify memory sandbox
         run: |
           cd "${{ runner.temp }}"
-          "${{ runner.temp }}/labton-wheel-venv/bin/python" -m labton --project portable-memory study qualify --workspace portable-memory
+          "${{ runner.temp }}/labtune-wheel-venv/bin/python" -m labtune --project portable-memory study qualify --workspace portable-memory
       - if: failure() && runner.os == 'macOS'
         name: Show sandbox qualification diagnostics
         env:
-          LABTON_QUALIFICATION_DIR: ${{ runner.temp }}/portable-memory/setup/memory_qualification
+          LABTUNE_QUALIFICATION_DIR: ${{ runner.temp }}/portable-memory/setup/memory_qualification
         run: |
           python - <<'PY'
           import os
           import sys
           from pathlib import Path
           print(f"Python: {sys.executable}; base prefix: {sys.base_prefix}")
-          root = Path(os.environ["LABTON_QUALIFICATION_DIR"])
+          root = Path(os.environ["LABTUNE_QUALIFICATION_DIR"])
           for path in sorted(root.rglob("*")):
               if path.name in {"stderr.log", "result.json", "sandbox.sb"} and path.is_file():
                   print(f"{path.relative_to(root)}:\n{path.read_text()[-8000:]}")

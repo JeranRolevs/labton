@@ -7,7 +7,7 @@ Their generation model and persona remain user choices.
 ## Create a workspace
 
 ```bash
-labton init ../scientist-lab --template scientist
+labtune init ../scientist-lab --template scientist
 cd ../scientist-lab
 python3 lab.py prepare
 ```
@@ -109,7 +109,7 @@ different CLI overrides therefore keeps the actual settings visible; no automati
 From a checkout, inspect a structural plan directly:
 
 ```bash
-labton --project . plan --design lab_designs/F-single-scientist.md \
+labtune --project . plan --design lab_designs/F-single-scientist.md \
   --persistence medium --sequences 3
 ```
 

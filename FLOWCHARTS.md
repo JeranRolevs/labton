@@ -1,4 +1,4 @@
-# Labton flowcharts
+# Labtune flowcharts
 
 Updated 2026-10-31. These graphs show the implemented bounded study workflow,
 memory-policy example and optional local lab observatory. Gray dashed nodes mark planned general asset services.

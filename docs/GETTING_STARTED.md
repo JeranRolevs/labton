@@ -6,7 +6,7 @@ Python 3.11+ is required. From the repository root:
 python3 -m venv .venv
 source .venv/bin/activate
 python3 -m pip install -e .
-labton init ../my-lab
+labtune init ../my-lab
 cd ../my-lab
 python3 lab.py prepare
 ```
@@ -38,7 +38,7 @@ connectivity check. [Decision endpoints](DECISION_PROVIDERS.md) are optional and
 ## Single-scientist workspace
 
 ```bash
-labton init ../scientist-lab --template scientist
+labtune init ../scientist-lab --template scientist
 ```
 
 Choose scientist-low, scientist-medium or scientist-persistent. The user selects the number
@@ -50,7 +50,7 @@ budget-driven work. [Single-scientist controls](SINGLE_SCIENTIST.md).
 From the checkout, install python3 -m pip install -e '.[memory]', then:
 
 ```bash
-labton init ../memory-lab --template memory
+labtune init ../memory-lab --template memory
 cd ../memory-lab
 python3 lab.py prepare
 # Configure the chosen provider and budgets in study.yaml before qualification.

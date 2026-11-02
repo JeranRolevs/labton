@@ -9,12 +9,12 @@ import tempfile
 import unittest
 from unittest.mock import patch
 
-from labton.cli import main
-from labton.config import ConfigurationError
-from labton.planning import catalogue, compile_plan
-from labton.scaffold import init_workspace
-from labton.study import load_study, plans, save, TextStudy
-from labton.visualization import (CONFIRMATION_NODE, SetupVisualizationAgent, RuntimeObserverAgent,
+from labtune.cli import main
+from labtune.config import ConfigurationError
+from labtune.planning import catalogue, compile_plan
+from labtune.scaffold import init_workspace
+from labtune.study import load_study, plans, save, TextStudy
+from labtune.visualization import (CONFIRMATION_NODE, SetupVisualizationAgent, RuntimeObserverAgent,
                                  VisualizationSession, VisualizationServer, activity_metadata, render_page)
 
 PROJECT = Path(__file__).resolve().parents[1]
@@ -191,7 +191,7 @@ class VisualizationTests(unittest.TestCase):
         state["setup"]["design"]["name"] = '</script><script>alert("XSS")</script>'
         page = render_page(state)
         self.assertNotIn('</script><script>alert', page)
-        self.assertNotIn("/* Labton_", page)
+        self.assertNotIn("/* Labtune_", page)
         self.assertIn('"api_url": null', page)
         self.assertNotIn("https://", page)
         self.assertIn("Runtime observer", page)
@@ -226,7 +226,7 @@ class VisualizationTests(unittest.TestCase):
         workspace = self.root / "lab"
         init_workspace(workspace)
         target = self.root / "view.html"
-        with patch("labton.study.ChatCompletionsClient", side_effect=AssertionError("No model calls")), redirect_stdout(StringIO()):
+        with patch("labtune.study.ChatCompletionsClient", side_effect=AssertionError("No model calls")), redirect_stdout(StringIO()):
             code = main(["--project", str(workspace), "study", "visualize", "--workspace", str(workspace),
                          "--variant", "single", "--output", str(target)])
         self.assertEqual(code, 0)

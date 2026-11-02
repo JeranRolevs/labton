@@ -111,9 +111,9 @@ def diagrams():
     g["footer"]="Confirmation never fits thresholds on scored cases or returns feedback to the acting agents."
     result.append(g)
 
-    g=graph("05-standalone-components", "Standalone repository and workspace", "The independent Labton package owns its implementation and ships wheel-ready starter resources.")
+    g=graph("05-standalone-components", "Standalone repository and workspace", "The independent Labtune package owns its implementation and ships wheel-ready starter resources.")
     for args in [
-        ("package",3,3,"Labton Python package","CLI + schemas + study runner","code",4.2),
+        ("package",3,3,"Labtune Python package","CLI + schemas + study runner","code",4.2),
         ("init",10,3,"Workspace initializer","Bundled presets + examples","code",4.2),
         ("workspace",17,3,"User workspace","Editable designs, study and mission","artifact",4.2),
         ("provider",3,6.4,"Generation + decision adapters","Configured generation and decisions","optional",4.2),
@@ -189,7 +189,7 @@ def diagrams():
     g["footer"]="Only this episode yields; other ready tasks continue. An unavailable answer remains explicit."
     result.append(g)
 
-    g=graph("08-horizontal-lab", "Labton lab — mission to measured output", "User-selected organization; parallel research; local measurements; protected confirmation.",width=30,height=10)
+    g=graph("08-horizontal-lab", "Labtune lab — mission to measured output", "User-selected organization; parallel research; local measurements; protected confirmation.",width=30,height=10)
     for args in [
         ("setup",2.5,3.4,"Choose mission + lab","Six editable Markdown styles","artifact",4.15),
         ("control",7.5,3.4,"Orchestrate","Dependencies + global budgets","code",4.15),
@@ -243,7 +243,7 @@ def diagrams():
         ("plan",3,3.2,"User-selected lab plan","Design, personas, sharing and budgets","artifact",4.8),
         ("setup",10,3.2,"Agent 1: setup visualizer","Resolve process and team maps","code",5.0),
         ("page",20,5.7,"Local web observatory","Workflow / team / activity / inspect\nLive updates or offline HTML snapshot","artifact",5.0,1.7),
-        ("runner",3,7.2,"Labton research runtime","User-authorized study execution","code",4.8),
+        ("runner",3,7.2,"Labtune research runtime","User-authorized study execution","code",4.8),
         ("activity",10,7.2,"Metadata + heartbeat","Nodes, actors, request/evaluation bounds","evidence",5.0),
         ("observer",10,10.0,"Agent 2: runtime observer","Correlate activity; mark stale/failed work","code",5.0),
     ]:
