@@ -1,3 +1,11 @@
+@font-face {
+  font-family: "Labton Noir Pro";
+  src: local("Noir Pro Medium"), local("NoirPro-Medium");
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+}
+
 :root {
   --ground: #e7e3da;
   --surface: #faf8f2;
@@ -17,6 +25,8 @@
   --fault-fill: #f9e7e4;
   --mono: ui-monospace, SFMono-Regular, Consolas, monospace;
   --display: Rockwell, "DejaVu Serif", Georgia, serif;
+  --wordmark-font: "Labton Noir Pro", "Noir Pro", "Noir", Arial, Helvetica, sans-serif;
+  --wordmark-yellow: #FFDA00;
 }
 
 * { box-sizing: border-box; }
@@ -34,7 +44,7 @@ h1, h2, h3, p { margin: 0; }
 .skip-link:focus { top: 8px; }
 .console-header { display: flex; align-items: center; justify-content: space-between; gap: 20px; background: var(--header); border-bottom: 3px double var(--brass); padding: 12px 24px; }
 .console-title { display: flex; align-items: baseline; gap: 22px; }
-.wordmark { font: 700 23px/1.15 var(--display); letter-spacing: .08em; text-transform: uppercase; padding: 3px 0; border-top: 1px solid var(--brass); border-bottom: 1px solid var(--brass); }
+.wordmark { font: 500 25px/1.15 var(--wordmark-font); font-synthesis: none; color: var(--wordmark-yellow); background: var(--ink); letter-spacing: .06em; text-transform: uppercase; padding: 6px 10px; border: 1px solid var(--ink); }
 h1 { font-size: 19px; font-weight: 700; }
 .read-only { border: 1px solid #978b78; padding: 2px 6px; font-size: 11px; }
 .connection-field { display: flex; align-items: baseline; gap: 10px; font-size: 12px; }

@@ -31,6 +31,10 @@ paused views and missing telemetry are explicitly distinguished from current obs
 
 [Display design notes](VISUALIZATION_DESIGN.md) record the rationale and reference guidance.
 
+The yellow (`#FFDA00`) Labton wordmark uses Noir Pro Medium (weight 500) when installed on
+the viewing computer. Noir Medium and system sans-serif fonts provide fallbacks. Font loading
+stays local, including in exported snapshots.
+
 For [design F](SINGLE_SCIENTIST.md), the setup panel also records persistence, fixed-pass or
 budget-driven effort, sequence count and context policy. The execution field follows current
 sequence/pass progress. The diagram keeps one scientist row and shows ordered pass boundaries
